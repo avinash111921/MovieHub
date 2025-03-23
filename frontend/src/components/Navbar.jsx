@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Film, LogIn, Menu, X, Search } from 'lucide-react';
+import { Film, LogIn, Menu, X, Search,Star, Calendar, MessageCircle } from 'lucide-react';
 import { ShopContext } from '../context/ShopContext.jsx';
 
 const Navbar = () => {
@@ -10,6 +10,8 @@ const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const { token, setToken } = useContext(ShopContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const isActive = (path) => location.pathname === path;
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
@@ -84,6 +86,56 @@ const Navbar = () => {
                     </button>
                 </div>
             </header>
+            <nav className={`bg-white shadow md:block ${isOpen ? 'block' : 'hidden'}`}>
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 py-4">
+                        <Link
+                            to="/"
+                            className={`py-2 px-2 border-b-2 ${
+                                isActive('/')
+                                    ? 'border-purple-600 text-purple-600'
+                                    : 'border-transparent text-gray-600'
+                            } font-medium flex items-center space-x-2`}
+                        >
+                            <Film className="w-4 h-4" />
+                            <span>Home</span>
+                        </Link>
+                        <Link
+                            to="/reviews"
+                            className={`py-2 px-2 border-b-2 ${
+                                isActive('/reviews')
+                                    ? 'border-purple-600 text-purple-600'
+                                    : 'border-transparent text-gray-600'
+                            } font-medium flex items-center space-x-2`}
+                        >
+                            <Star className="w-4 h-4" />
+                            <span>Reviews</span>
+                        </Link>
+                        <Link
+                            to="/upcoming"
+                            className={`py-2 px-2 border-b-2 ${
+                                isActive('/upcoming')
+                                    ? 'border-purple-600 text-purple-600'
+                                    : 'border-transparent text-gray-600'
+                            } font-medium flex items-center space-x-2`}
+                        >
+                            <Calendar className="w-4 h-4" />
+                            <span>Upcoming</span>
+                        </Link>
+                        <Link
+                            to="/discussions"
+                            className={`py-2 px-2 border-b-2 ${
+                                isActive('/discussions')
+                                    ? 'border-purple-600 text-purple-600'
+                                    : 'border-transparent text-gray-600'
+                            } font-medium flex items-center space-x-2`}
+                        >
+                            <MessageCircle className="w-4 h-4" />
+                            <span>Discussions</span>
+                        </Link>
+                    </div>
+                </div>
+            </nav>
         </>
     );
 };
