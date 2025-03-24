@@ -8,7 +8,6 @@ const Login = () => {
     const { login, loading } = useContext(ShopContext);
     const [formData, setFormData] = useState({
         email: '',
-        username: '',
         password: ''
     });
 
@@ -24,8 +23,8 @@ const Login = () => {
         e.preventDefault();
         
         // Validate form
-        if (!formData.password || !(formData.email || formData.username)) {
-            toast.error('Email/username and password are required');
+        if (!formData.password || !formData.email) {
+            toast.error('Email and password are required');
             return;
         }
 
@@ -56,15 +55,16 @@ const Login = () => {
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm -space-y-px">
                         <div>
-                            <label htmlFor="email-username" className="sr-only">Email or Username</label>
+                            <label htmlFor="email" className="sr-only">Email</label>
                             <input
-                                id="email-username"
+                                id="email"
                                 name="email"
-                                type="text"
+                                type="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Email address or username"
+                                placeholder="Email address"
+                                required
                             />
                         </div>
                         <div>

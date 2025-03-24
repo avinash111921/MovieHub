@@ -6,7 +6,7 @@ export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
-    const [token, setToken] = useState("");
+    const [token, setToken] = useState(localStorage.getItem('token') || "");
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
@@ -17,16 +17,24 @@ const ShopContextProvider = (props) => {
     axios.defaults.baseURL = backendUrl;
     axios.defaults.withCredentials = true;
 
+    // Set Authorization header whenever token changes
     useEffect(() => {
-        if(!token && localStorage.getItem('token')){
-            setToken(localStorage.getItem('token'));
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        } else {
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (token) {
             // Get user profile when token is available
             fetchUserProfile();
         }
     }, [token]);
 
     const fetchUserProfile = async () => {
-        if (!token && !localStorage.getItem('token')) return;
+        if (!token) return;
         
         setLoading(true);
         try {
@@ -36,7 +44,7 @@ const ShopContextProvider = (props) => {
             console.error("Failed to fetch user profile:", error);
             // If unauthorized, clear token
             if (error.response?.status === 401) {
-                setToken(null);
+                setToken("");
                 localStorage.removeItem('token');
                 setUser(null);
             }
@@ -49,8 +57,15 @@ const ShopContextProvider = (props) => {
         setLoading(true);
         try {
             const response = await axios.post('/api/v1/users/login', credentials);
-            setToken(response.data.data.accessToken);
-            localStorage.setItem('token', response.data.data.accessToken);
+            const { accessToken } = response.data.data;
+            
+            // Set token in state and localStorage
+            setToken(accessToken);
+            localStorage.setItem('token', accessToken);
+            
+            // Set the authorization header immediately
+            axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+            
             setUser(response.data.data.user);
             return true;
         } catch (error) {
@@ -64,12 +79,16 @@ const ShopContextProvider = (props) => {
     const logout = async () => {
         setLoading(true);
         try {
-            await axios.post('/api/v1/users/logout');
+            if (token) {
+                await axios.post('/api/v1/users/logout');
+            }
         } catch (error) {
             console.error("Logout API call failed:", error);
         } finally {
-            setToken(null);
+            // Clear token and user data
+            setToken("");
             localStorage.removeItem('token');
+            delete axios.defaults.headers.common['Authorization'];
             setUser(null);
             setLoading(false);
             navigate('/');
