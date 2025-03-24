@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Home from './pages/Home.jsx';
@@ -12,6 +12,37 @@ import 'react-toastify/dist/ReactToastify.css';
 import About from "./pages/About.jsx";
 import Contact from './pages/Contact.jsx';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import UserProfile from './pages/UserProfile';
+import ChangePassword from './pages/ChangePassword';
+import axios from 'axios';
+
+// Configure axios defaults
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+axios.defaults.withCredentials = true;
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+    const [isAuthenticated, setIsAuthenticated] = React.useState(null);
+
+    React.useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                await axios.get('/api/v1/users/current-user');
+                setIsAuthenticated(true);
+            } catch (error) {
+                setIsAuthenticated(false);
+            }
+        };
+        checkAuth();
+    }, []);
+
+    if (isAuthenticated === null) {
+        return <div>Loading...</div>;
+    }
+
+    return isAuthenticated ? children : <Navigate to="/login" />;
+};
 
 const App = () => {
   return (
@@ -21,6 +52,7 @@ const App = () => {
         <Navbar />
         <div className="flex-grow">
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/discussions" element={<Discussions />} />
@@ -29,6 +61,28 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Protected Routes */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute>
+                  <ChangePassword />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Catch all route */}
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
         <Footer />

@@ -2,7 +2,7 @@ import {asyncHandler} from "../utils/AsyncHandler.js";
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {ApiError} from "../utils/ApiError.js"
 import  {User} from "../models/userModel.js"
-import {uploadOnCloudinary,deleteFromCloudinary, deleteFromCloudinary} from '../utils/cloudinary.js';
+import {uploadOnCloudinary,deleteFromCloudinary} from '../utils/cloudinary.js';
 import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshToken = async(userId) => {
@@ -110,7 +110,7 @@ const loginUser = asyncHandler(async (req,res) => {
     })
 
     if(!user){
-        throw new ApiError(404,"User doe not exist")
+        throw new ApiError(404,"User does not exist")
     }
 
     const isPasswordValid = await user.isPasswordCorrect(password);

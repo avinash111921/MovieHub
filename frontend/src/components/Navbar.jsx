@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Film, LogIn, Menu, X, Search,Star, Calendar, MessageCircle } from 'lucide-react';
+import { Film, LogIn, Menu, X, Search, Star, Calendar, MessageCircle, User, LogOut, UserPlus } from 'lucide-react';
 import { ShopContext } from '../context/ShopContext.jsx';
 
 const Navbar = () => {
@@ -21,7 +21,7 @@ const Navbar = () => {
     const handleSearch = async (event) => {
         event.preventDefault();
         if (!searchQuery) return;
-
+        
         const apiKey = "b13184b3"; // Your OMDb API Key
         const url = `https://www.omdbapi.com/?s=${searchQuery}&apikey=${apiKey}`;
 
@@ -43,6 +43,7 @@ const Navbar = () => {
         setToken(null);
         localStorage.removeItem('token');
         setIsLoggedIn(false);
+        navigate('/');
     };
 
     return (
@@ -67,15 +68,27 @@ const Navbar = () => {
                     </form>
                     <div className="hidden md:flex items-center space-x-4">
                         {!isLoggedIn ? (
-                            <Link to="/login" className="flex items-center space-x-2">
-                                <LogIn className="w-6 h-6" />
-                                <span>SignUp / Login</span>
-                            </Link>
+                            <>
+                                <Link to="/login" className="flex items-center space-x-2 px-3 py-1 rounded hover:bg-indigo-700">
+                                    <LogIn className="w-5 h-5" />
+                                    <span>Login</span>
+                                </Link>
+                                <Link to="/register" className="flex items-center space-x-2 bg-indigo-600 px-3 py-1 rounded hover:bg-indigo-700">
+                                    <UserPlus className="w-5 h-5" />
+                                    <span>Register</span>
+                                </Link>
+                            </>
                         ) : (
-                            <button onClick={handleLogout} className="flex items-center space-x-2">
-                                <LogIn className="w-6 h-6" />
-                                <span>Logout</span>
-                            </button>
+                            <>
+                                <Link to="/profile" className="flex items-center space-x-2 px-3 py-1 rounded hover:bg-indigo-700">
+                                    <User className="w-5 h-5" />
+                                    <span>Profile</span>
+                                </Link>
+                                <button onClick={handleLogout} className="flex items-center space-x-2 bg-red-600 px-3 py-1 rounded hover:bg-red-700">
+                                    <LogOut className="w-5 h-5" />
+                                    <span>Logout</span>
+                                </button>
+                            </>
                         )}
                     </div>
                     <button 
@@ -133,6 +146,45 @@ const Navbar = () => {
                             <MessageCircle className="w-4 h-4" />
                             <span>Discussions</span>
                         </Link>
+                        
+                        {/* Mobile auth links */}
+                        <div className="md:hidden border-t pt-4 mt-2">
+                            {!isLoggedIn ? (
+                                <>
+                                    <Link
+                                        to="/login"
+                                        className="py-2 px-2 text-gray-600 font-medium flex items-center space-x-2"
+                                    >
+                                        <LogIn className="w-4 h-4" />
+                                        <span>Login</span>
+                                    </Link>
+                                    <Link
+                                        to="/register"
+                                        className="py-2 px-2 text-gray-600 font-medium flex items-center space-x-2"
+                                    >
+                                        <UserPlus className="w-4 h-4" />
+                                        <span>Register</span>
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        to="/profile"
+                                        className="py-2 px-2 text-gray-600 font-medium flex items-center space-x-2"
+                                    >
+                                        <User className="w-4 h-4" />
+                                        <span>Profile</span>
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="py-2 px-2 text-red-600 font-medium flex items-center space-x-2"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        <span>Logout</span>
+                                    </button>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </nav>

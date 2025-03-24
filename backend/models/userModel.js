@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
@@ -58,9 +57,9 @@ userSchema.methods.generateAccessToken = function(){
         username : this.username,
         fullname : this.fullname
     },
-    process.env.ACESS_TOKEN_SECRET,
+    process.env.ACCESS_TOKEN_SECRET,
     { 
-        expiresIn : process.env.ACESS_TOKEN_EXPIRY
+        expiresIn : process.env.ACCESS_TOKEN_EXPIRY
     }
 );
 }
