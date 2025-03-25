@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { ShopContext } from '../context/ShopContext';
+import ChangePassword from './ChangePassword'; '../pages/ChangePassword.jsx'
 
 const UserProfile = () => {
-    const { user, fetchUserProfile, loading } = useContext(ShopContext);
+    const { user, fetchUserProfile ,loading} = useContext(ShopContext);
     const [formData, setFormData] = useState({
         fullname: '',
         email: '',
@@ -43,6 +44,7 @@ const UserProfile = () => {
             [name]: value
         }));
     };
+    
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
@@ -71,16 +73,18 @@ const UserProfile = () => {
         setUpdating(true);
 
         try {
-            const formDataToSend = new FormData();
+            const formDataToSend = new URLSearchParams();
             formDataToSend.append('fullname', formData.fullname);
             formDataToSend.append('email', formData.email);
-            if (formData.username) {
-                formDataToSend.append('username', formData.username);
-            }
-
-            const response = await axios.patch('/api/v1/users/update-account', formDataToSend);
+            formDataToSend.append('username', formData.username);
+            
+            await axios.patch('/api/v1/users/update-account', formDataToSend, {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            // console.log(response.data.data);
             toast.success('Profile updated successfully');
-            fetchUserProfile();
+            // console.log("Updated User Data:", response.data.data);
+            await fetchUserProfile();
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to update profile');
         } finally {
@@ -99,7 +103,7 @@ const UserProfile = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('avatar', formData.avatar);
 
-            const response = await axios.patch('/api/v1/users/avatar', formDataToSend);
+            await axios.patch('/api/v1/users/avatar', formDataToSend);
             toast.success('Avatar updated successfully');
             fetchUserProfile();
             setAvatarPreview(null);
@@ -122,7 +126,7 @@ const UserProfile = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('coverImage', formData.coverImage);
 
-            const response = await axios.patch('/api/v1/users/cover-image', formDataToSend);
+            await axios.patch('/api/v1/users/cover-image', formDataToSend);
             toast.success('Cover image updated successfully');
             fetchUserProfile();
             setCoverPreview(null);
@@ -133,7 +137,7 @@ const UserProfile = () => {
             setUpdating(false);
         }
     };
-
+    if (loading) return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
     if (!user) return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
 
     return (
@@ -261,6 +265,10 @@ const UserProfile = () => {
                             </button>
                         </div>
                     </form>
+                    <div className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4 text-gray-900">Security</h2>
+                        <ChangePassword />
+                    </div>
                 </div>
             </div>
         </div>

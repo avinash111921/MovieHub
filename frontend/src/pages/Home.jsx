@@ -61,7 +61,7 @@ function Home() {
         }
         setHasMore(false);
         if (page === 1) {
-          setError("No movies found");
+        setError("No movies found");
         }
       }
     } catch (error) {
@@ -141,9 +141,9 @@ function Home() {
           >
             <source src={HERO_VIDEO_URL} type="video/mp4" />
             {/* Fallback image if video fails to load */}
-            <img
-              src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80"
-              alt="Cinema"
+          <img
+            src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80"
+            alt="Cinema"
               className="w-full h-full object-cover"
             />
           </video>

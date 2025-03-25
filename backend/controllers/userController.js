@@ -230,33 +230,37 @@ const getCurrentUser = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200,req.user,"Current User fetched SuccessFully"));
 })
 
-const updateAccountDetails = asyncHandler(async(req,res) => {
-    const {fullname, email, username} = req.body;
-    if(!fullname || !email){
-        throw new ApiError(400,"All fields are required");
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    // console.log(req.body)
+    const { fullname, email, username } = req.body;
+    // console.log('Received values:', fullname, email, username);
+    // Check if at least one field is being updated
+    if (!fullname && !email && !username) {
+        throw new ApiError(400, "At least one field is required for updating");
     }
+
     try {
+        const updatedFields = {};
+        if (fullname) updatedFields.fullname = fullname;
+        if (email) updatedFields.email = email;
+        if (username) updatedFields.username = username.toLowerCase(); // Keep username lowercase
+
         const user = await User.findByIdAndUpdate(
             req.user?._id,
-            {
-                $set : {
-                    fullname,
-                    email,
-                    ...(username && {username: username.toLowerCase()})
-                },
-            },{new : true}
+            { $set: updatedFields },
+            { new: true }
         ).select("-password");
 
-        if(!user){
-            throw new ApiError(404,"user not found");
+        if (!user) {
+            throw new ApiError(404, "User not found");
         }
-        return res
-        .status(200)
-        .json(new ApiResponse(200,user,"Account Details updated successfully"));
+
+        return res.status(200).json(new ApiResponse(200, user, "Account details updated successfully"));
     } catch (error) {
         throw new ApiError(500, "An error occurred while updating account details");
     }
-})
+});
+
 
 const updateUserAvatar = asyncHandler(async (req,res) => {
     const avatarLocalPath = req.file?.path;

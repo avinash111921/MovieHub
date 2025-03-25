@@ -39,6 +39,9 @@ const ShopContextProvider = (props) => {
         setLoading(true);
         try {
             const response = await axios.get('/api/v1/users/current-user');
+
+            /* console.log(response.data.data); */
+            /* avatar , coverImage,createdAt: ,email: ,fullname: ,updatedAt: ,username: ,__v: 0,_id:*/
             setUser(response.data.data);
         } catch (error) {
             console.error("Failed to fetch user profile:", error);
@@ -57,6 +60,10 @@ const ShopContextProvider = (props) => {
         setLoading(true);
         try {
             const response = await axios.post('/api/v1/users/login', credentials);
+
+            /* console.log(response.data.data) */ 
+             /* accessToken refresh Token then user data  */
+
             const { accessToken } = response.data.data;
             
             // Set token in state and localStorage
