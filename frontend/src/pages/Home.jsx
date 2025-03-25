@@ -25,7 +25,7 @@ function Home() {
   const scrollContainerRef = useRef(null);
 
   const fetchMovies = useCallback(async (resetMovies = false) => {
-    if (loading && !resetMovies) return;
+    if (loading && !resetMovies) return;  /* Together, this condition prevents multiple fetch requests from being triggered at the same time, avoiding unnecessary API calls and improving performance. */
     
     setLoading(true);
     try {
@@ -152,7 +152,7 @@ function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-gray-900/90 flex items-center justify-center pt-[72px]">
             <div className="container mx-auto px-6 py-12 text-center">
               <motion.h1 
-                className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight"
+                className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight text-center"
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -185,7 +185,7 @@ function Home() {
                 />
                 <motion.button 
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full flex items-center"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 md:px-6 py-2 rounded-full flex items-center text-sm md:text-base"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -201,7 +201,7 @@ function Home() {
       {/* Genre Selection */}
       <section className="py-8 bg-white shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center flex-wrap gap-3">
+          <div className="flex items-center justify-center flex-wrap gap-2 md:gap-3 px-2">
             {GENRES.map((genre) => (
               <motion.button
                 key={genre}
@@ -260,7 +260,7 @@ function Home() {
             
             <div 
               ref={scrollContainerRef}
-              className="overflow-x-auto pb-6 no-scrollbar"
+              className="overflow-x-auto pb-6 no-scrollbar flex space-x-4 snap-x snap-mandatory"
               style={{ scrollBehavior: 'smooth' }}
               onScroll={(e) => {
                 // Load more when scrolling near the end

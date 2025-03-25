@@ -105,7 +105,7 @@ const ShopContextProvider = (props) => {
     const register = async (userData) => {
         setLoading(true);
         try {
-            const response = await axios.post('/api/v1/users/register', userData, {
+            await axios.post('/api/v1/users/register', userData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
