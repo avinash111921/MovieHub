@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import MovieCard from '../components/MovieCard.jsx';
-import { Search, TrendingUp, Star, Calendar, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, TrendingUp, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const API_KEY = "b13184b3"; // Your OMDb API key
 const GENRES = ['action', 'comedy', 'thriller', 'romance', 'sci-fi', 'adventure'];
@@ -20,6 +20,7 @@ function Home() {
   
   // Ref to store all fetched movies to avoid duplicates
   const allMoviesRef = useRef(new Set());
+
   // Ref for horizontal scroll container
   const scrollContainerRef = useRef(null);
 
@@ -126,7 +127,7 @@ function Home() {
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section with Video Background */}
       <motion.section 
-        className="relative h-[500px] overflow-hidden -mt-[72px]" // Negative margin to remove gap
+        className="relative h-[575px] overflow-hidden -mt-[72px] " // Negative margin to remove gap
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
