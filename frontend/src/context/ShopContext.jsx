@@ -1,6 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from "react-hot-toast"
+import {io} from "socket.io-client"
 
 export const ShopContext = createContext();
 
@@ -11,6 +13,8 @@ const ShopContextProvider = (props) => {
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
+    const [onlineUsers,setOnlineUsers] = useState([]);
+    const [socket, setSocket] = useState(null);
     const navigate = useNavigate();
 
     // Configure axios defaults
@@ -43,6 +47,7 @@ const ShopContextProvider = (props) => {
             /* console.log(response.data.data); */
             /* avatar , coverImage,createdAt: ,email: ,fullname: ,updatedAt: ,username: ,__v: 0,_id:*/
             setUser(response.data.data);
+            connectSocket(response.data.data._id);
         } catch (error) {
             console.error("Failed to fetch user profile:", error);
             // If unauthorized, clear token
@@ -74,6 +79,7 @@ const ShopContextProvider = (props) => {
             axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
             
             setUser(response.data.data.user);
+            connectSocket(response.data.data.user._id);
             return true;
         } catch (error) {
             console.error("Login failed:", error);
@@ -88,6 +94,9 @@ const ShopContextProvider = (props) => {
         try {
             if (token) {
                 await axios.post('/api/v1/users/logout');
+                setAuthUser(null);
+                toast.success("Logged out successfully");
+                disconnectSocket();
             }
         } catch (error) {
             console.error("Logout API call failed:", error);
@@ -105,11 +114,14 @@ const ShopContextProvider = (props) => {
     const register = async (userData) => {
         setLoading(true);
         try {
-            await axios.post('/api/v1/users/register', userData, {
+            const response = await axios.post('/api/v1/users/register', userData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            setUser(response.data.data.user);
+            toast.success("Account created successfully");
+            connectSocket(res.data._id);
             return { success: true };
         } catch (error) {
             console.error("Registration failed:", error);
@@ -118,6 +130,27 @@ const ShopContextProvider = (props) => {
             setLoading(false);
         }
     };
+
+    const connectSocket = (userId) => {
+        if(!userId || socket?.connected) return;
+
+        const newSocket = io(backendUrl,{
+            query: { userId },
+        })
+
+        newSocket.connect();
+        setSocket(newSocket);
+
+        newSocket.on('getOnlineUser',(userIds) => {
+            setOnlineUsers(userIds);
+        })
+    }
+
+    const disconnectSocket = () => {
+        if (socket?.connected) socket.disconnect();
+        setSocket(null);
+    }
+
 
     const value = {
         navigate,
@@ -134,7 +167,11 @@ const ShopContextProvider = (props) => {
         search,
         setSearch,
         showSearch,
-        setShowSearch
+        setShowSearch,
+        connectSocket,
+        disconnectSocket,
+        onlineUsers,
+        socket,
     };
 
     return(

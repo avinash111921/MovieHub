@@ -15,9 +15,8 @@ const messageSchema = new Schema(
         text : {
             type : String
         },
-        imageUrls : {
-            type: [String], // Updated to store multiple image URLs
-            default: []
+        image : {
+            type: String, 
         }
     },{timestamps : true}
 )

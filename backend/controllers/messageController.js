@@ -1,6 +1,6 @@
 import { User } from "../models/userModel.js"
 import Message from "../models/messageModels.js"
-import {uploadMultipleOnCloudinary,deleteFromCloudinary} from "../utils/cloudinary.js"
+import {uploadOnCloudinary,deleteFromCloudinary} from "../utils/cloudinary.js"
 import {getReciverScoketID,io} from "../lib/socket.js"
 import { asyncHandler } from "../utils/AsyncHandler.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
@@ -48,15 +48,15 @@ const getMessage  = asyncHandler(async(req,res) => {
 const sendMessage = asyncHandler(async(req,res) => {
     try {
         const {text} = req.body;
-        const imageLocalPaths =  req.files ? req.files.map((file) => file.path) : [];
+        const imageLocalPath =  req.files?.messageImage?.[0]?.path;
         const {id:reciverId} = req.params
         const senderId = req.user._id
 
-        let messageImages = [];
+        let messageImage = "";
         try {
             //upload image to cloudinary
-            if (imageLocalPaths.length > 0) {
-                messageImages = await uploadMultipleOnCloudinary(imageLocalPaths);
+            if (imageLocalPath) {
+                messageImage = await uploadOnCloudinary(imageLocalPath);
             }
         } catch (error) {
             throw new ApiError(500,"Failed to upload messageImage");
@@ -65,7 +65,7 @@ const sendMessage = asyncHandler(async(req,res) => {
             senderId,
             reciverId,
             text,
-            imageUrls: messageImages
+            image: messageImage
         })
         await newMessage.save();
 
@@ -76,9 +76,9 @@ const sendMessage = asyncHandler(async(req,res) => {
         res.status(200).json(new ApiResponse(200,{newMessage},"Successfully send message"));
 
     } catch (error) {
-        if(imageUrl){
+        if(messageImage){
             //delete image from cloudinary
-            await deleteFromCloudinary(imageUrl)
+            await deleteFromCloudinary(messageImage.public_id)
         }
         console.log("Error in sendMessage controller ",error.message);
         res

@@ -9,7 +9,12 @@ router.route("/sidebaruser").get(verifyJWT,getUserforSidebar);
 router.route("/:id").get(verifyJWT,getMessage)
 router.route("/send/:id").post(
     verifyJWT,
-    upload.array("messageImage",5),  //allow up to 5 messages
+    upload.fields([
+        {
+            name: "messageImage",
+            maxCount: 1
+        },
+    ]),
     sendMessage
 )
 export { router as messageRouter };
