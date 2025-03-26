@@ -1,7 +1,7 @@
-import User from "../models/userModel.js"
+import { User } from "../models/userModel.js"
 import Message from "../models/messageModels.js"
 import {uploadMultipleOnCloudinary,deleteFromCloudinary} from "../utils/cloudinary.js"
-import {getReciverSocketId,io} from "../lib/socket.js"
+import {getReciverScoketID,io} from "../lib/socket.js"
 import { asyncHandler } from "../utils/AsyncHandler.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { ApiError } from "../utils/ApiError.js"
@@ -69,7 +69,7 @@ const sendMessage = asyncHandler(async(req,res) => {
         })
         await newMessage.save();
 
-        const reciverSocketId = await getReciverSocketId(reciverId);
+        const reciverSocketId = await getReciverScoketID(reciverId);
         if(reciverSocketId){
             io.to(reciverSocketId).emit("newMessage", newMessage)
         }

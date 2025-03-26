@@ -1,11 +1,13 @@
 import { Server } from "socket.io"
 import http from "http"
-import {app} from '../app.js'
+import express from "express" // Import express
+
+const app = express(); // Initialize app before using it
 
 const server = http.createServer(app)
 const io = new Server(server);  //if not work pass cors : origin 
 
-export function getReciverScoketID(userId) {
+function getReciverScoketID(userId) {
     return userSocketMap[userId];
 }
 
@@ -26,4 +28,4 @@ io.on("connection",(socket) => {
         io.emit("getOnlineUser",Object.keys(userSocketMap));
     })
 })
-export {io,server};
+export {io,server,getReciverScoketID};
