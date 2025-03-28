@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import {X} from "lucide-react"
 import {ShopContext} from "../context/ShopContext.jsx"
-import  {useChatStore}  from '../context/ChatContext.jsx'
+import { useChatContext } from '../context/ChatContext.jsx'
 
 const ChatHeader = () => {
-    const {selectedUser,setSelectedUser} = useChatStore();
+    const {selectedUser,setSelectedUser} = useChatContext();
     const  {onlineUsers} = useContext(ShopContext);
 
   return (

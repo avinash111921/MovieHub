@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/axios.js"; 
 import toast from "react-hot-toast";
@@ -6,7 +6,15 @@ import { io } from "socket.io-client";
 
 export const ShopContext = createContext();
 
-const ShopContextProvider = ({ children }) => {
+export const useShopContext = ({ children }) => {
+    const context = useContext(ShopContext);
+    if (!context) {
+        throw new Error('useShopContext must be used within a ShopContextProvider');
+    }
+    return context;
+};
+
+export const ShopContextProvider = ({ children }) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8001";
     const [token, setToken] = useState(localStorage.getItem("token") || "");
     const [user, setUser] = useState(null);

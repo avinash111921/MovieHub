@@ -1,20 +1,20 @@
 import { useContext, useEffect,useState } from "react";
-import {useChatStore} from "../context/ChatContext.jsx"
+import { useChatContext } from "../context/ChatContext.jsx"
 import { ShopContext } from "../context/ShopContext.jsx";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton.jsx"
 import {Users} from "lucide-react"
 
 const Sidebar = () => {
-    const {getUsers,users,selectedUser,setSelectedUser,isUsersLoading} = useChatStore();
+    const {getUsers,users,selectedUser,setSelectedUser,isUsersLoading} = useChatContext();
     const {onlineUsers,user} = useContext(ShopContext);
     const [showOnlineOnly,setShowOnlineOnly] = useState(false);
 
     useEffect(() => {
         getUsers();
-    }, []);
+    }, [getUsers]);
 
-    const filteredUsers = showOnlineOnly ? users.filter((user) => onlineUsers.includes(user._id)) : users;
-    const onlineCount = onlineUsers.filter((user) => user !== user._id).length ;
+    const filteredUsers = showOnlineOnly ? users.filter((u) => onlineUsers.includes(u._id)) : users;
+    const onlineCount = user ? onlineUsers.filter((onlineUser) => onlineUser !== user._id).length : onlineUsers.length;
     if(isUsersLoading) {
         return <SidebarSkeleton/>
     }
@@ -42,9 +42,9 @@ const Sidebar = () => {
       </div>
 
       <div className="overflow-y-auto w-full py-3">
-        {filteredUsers.map((user) => (
+        {filteredUsers.map((user,index) => (
           <button
-            key={user._id}
+            key={index}
             onClick={() => setSelectedUser(user)}
             className={`
               w-full p-3 flex items-center gap-3

@@ -1,4 +1,4 @@
-import { useChatStore } from "../context/ChatContext";
+import { useChatContext } from "../context/ChatContext";
 import { useContext, useEffect, useRef } from "react";
 
 import ChatHeader from "./ChatHeader";
@@ -15,7 +15,7 @@ const ChatContainer = () => {
         selectedUser,
         subscribeToMessages,
         unsubscribeFromMessages,
-    } = useChatStore();
+    } = useChatContext();
 
     const { user, socket } = useContext(ShopContext);
     const messagesEndRef = useRef(null);
