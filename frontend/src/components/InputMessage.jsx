@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { useChatStore } from '../context/ChatContext';
 import toast from 'react-hot-toast';
+import { X, Image, Send } from "lucide-react";
+
 
 const InputMessage = () => {
     const [text,setText] = useState("");
@@ -10,18 +12,16 @@ const InputMessage = () => {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if(!file.type.startswith("image/")){
+        if(!file.type.startsWith("image/")){
             toast.error("Please select an image file");
             return;
         }
     }
     const reader = new FileReader();
-    reader.onload = () => {
-        reader.onloadend = () => {
-            setImagePreview(reader.result);
-        }
-        reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
     };
+    reader.readAsDataURL(file);
     const removeImage = () => {
         setImagePreview(null);
         if(fileInputRef.current){
@@ -33,7 +33,7 @@ const InputMessage = () => {
         if(!text.trim() && !imagePreview) return;
         try {
             sendMessage({
-                text : text.trim(),
+                text : text.trim() || null,
                 image :imagePreview,
             })
             setText("");

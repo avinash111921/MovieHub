@@ -5,8 +5,6 @@ import {getUserforSidebar,getMessage,sendMessage} from "../controllers/messageCo
 
 const router = Router();
 
-router.route("/sidebaruser").get(verifyJWT,getUserforSidebar);
-router.route("/:id").get(verifyJWT,getMessage)
 router.route("/send/:id").post(
     verifyJWT,
     upload.fields([
@@ -17,4 +15,6 @@ router.route("/send/:id").post(
     ]),
     sendMessage
 )
+router.route("/users").get(verifyJWT,getUserforSidebar);
+router.route("/:id").get(verifyJWT,getMessage)
 export { router as messageRouter };

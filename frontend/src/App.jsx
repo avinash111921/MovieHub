@@ -15,11 +15,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import UserProfile from './pages/UserProfile';
 import ChangePassword from './pages/ChangePassword';
-import axios from 'axios';
+import { axiosInstance } from "../src/utils/axios.js"; 
 
-// Configure axios defaults
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
-axios.defaults.withCredentials = true;
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -28,7 +25,7 @@ const ProtectedRoute = ({ children }) => {
     React.useEffect(() => {
         const checkAuth = async () => {
             try {
-                await axios.get('/api/v1/users/current-user');
+                await axiosInstance.get('/users/current-user');
                 setIsAuthenticated(true);
             } catch (error) {
                 setIsAuthenticated(false);

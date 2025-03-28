@@ -1,4 +1,4 @@
-import {asyncHandler} from "../utils/AsyncHandler.js";
+import {asyncHandler} from "../utils/AsyncHandler.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {ApiError} from "../utils/ApiError.js"
 import  {User} from "../models/userModel.js"
@@ -100,14 +100,13 @@ const registerUser = asyncHandler(async (req,res) => {
 })
 
 const loginUser = asyncHandler(async (req,res) => {
-    const {email,username,password} = req.body;
+    console.log(req.body)
+    const {email,password} = req.body;
     
     if(!(email || username)){
         throw new ApiError(400,"Email or userame is required");
     }
-    const user = await User.findOne({
-        $or : [{username},{email}],
-    })
+    const user = await User.findOne({email})
 
     if(!user){
         throw new ApiError(404,"User does not exist")

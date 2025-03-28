@@ -1,13 +1,11 @@
 import {create} from "zustand"
 import toast from "react-hot-toast"
 import {axiosInstance} from '../utils/axios.js'
-import {ShopContext} from "../context/ShopContext.jsx"
-import { useContext } from "react"
 
 
 
 export const useChatStore = create((set,get) => ({
-    message : [],
+    messages : [],
     users : [],
     selectedUser : null,
     isUsersLoading : false,
@@ -16,10 +14,11 @@ export const useChatStore = create((set,get) => ({
     getUsers : async () => {
         set({isUsersLoading : true});
         try {
-            const res = await axiosInstance.get('/messages/sidebaruser');
+            const res = await axiosInstance.get('/messages/users');
+            console.log("API Response:", res.data); 
             set({users : res.data})
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error.res.data.messages);
         }
         finally{
             set({isUsersLoading : false});
@@ -30,9 +29,9 @@ export const useChatStore = create((set,get) => ({
         set({isMessagesLoading : true});
         try {
             const res = await axiosInstance.get(`/messages/${userId}`);
-            set({message : res.data})
+            set({messages : res.data})
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error.res.data.message)
         }
         finally{
             set({isMessagesLoading : false});
@@ -40,31 +39,31 @@ export const useChatStore = create((set,get) => ({
     },
     
     sendMessage : async (messageData) => {
-        const {selectedUser, message} = get();
+        const {selectedUser, messages} = get();
         try {
             const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`,messageData);
-            set({message : [...message,res.data]})
+            set({messages : [...messages,res.data]})
         } catch (error) {
-            toast.error(error.response.data.message)
+            toast.error(error.res.data.message)
         }
     },
 
-    subscribeToMessages : async () => {
+    subscribeToMessages : async (socket) => {
         const { selectedUser } = get();
-        const {socket} = useContext(ShopContext);
-        if(!selectedUser) return;
+        if(!selectedUser || !socket) return;
 
         socket.on("newMessage",(newMessage)=> {
             const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
             if(!isMessageSentFromSelectedUser) return ;
             set({
-                message : [...get().message,newMessage]
+                messages : [...get().messages,newMessage]
             })
         })
     },
-    unsubscribeFromMessages : async (userId) => {
-        const {socket} = useContext(ShopContext);
-        socket.off("newMessage");
+    unsubscribeFromMessages : async (socket) => {
+        if(socket){
+            socket.off("newMessage");
+        }
     },
 
     setSelectedUser : (selectedUser) => set({ selectedUser })

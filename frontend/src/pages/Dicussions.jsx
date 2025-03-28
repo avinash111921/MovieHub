@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, ThumbsUp } from 'lucide-react';
 import { ShopContext } from '../context/ShopContext.jsx';
 import { useChatStore } from "../context/ChatContext.jsx"
 import Sidebar from "../components/Sidebar.jsx"
@@ -10,25 +9,18 @@ import ChatContainer from "../components/ChatContainer.jsx"
 
 function Discussions() {
   const {selectedUser} = useChatStore();
-
   const { token } = useContext(ShopContext); // Get token from context
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     // Check if the user is logged in
     const storedToken = localStorage.getItem('token');
-
-    if (token || storedToken) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-      navigate('/login'); // Redirect if not logged in
+    if (!(token || storedToken)) {
+      navigate('/login', { replace: true });
     }
-
-    setLoading(false); // Stop loading
-  }, [token, navigate]); // Depend on token
+    setLoading(false); 
+  }, [token, navigate]);
 
   if (loading) return <p>Loading...</p>; // Prevent UI flickering
 

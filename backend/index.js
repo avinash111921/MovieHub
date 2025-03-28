@@ -1,19 +1,20 @@
 import dotenv from "dotenv";
-import connectDB from "./db/index.js"
-import {app} from "./app.js"
+import connectDB from "./src/db/index.js"
+import {server} from "./src/lib/socket.js"
 
 dotenv.config({
     path : "./.env",
 })
 
-const PORT = process.env.PORT || 8001;
+const PORT = process.env.PORT || 5001;
 
 //IFFE 
 ;(async () => {
     try{
         await connectDB();
-        app.listen(PORT,()=> {
-            console.log(`Server is running on port ${PORT}`);
+        server.listen(PORT,()=> {
+            console.log(`⚙️  Server is running at http://localhost:${PORT}`);
+            console.log(`🔌 Socket.IO server is ready`);
         });
     }
     catch(error){
