@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef } from "react";
 import ChatHeader from "./ChatHeader";
 import InputMessage from "./InputMessage";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
-import { ShopContext } from "../context/ShopContext.jsx";
+import { AuthContext } from "../context/AuthContext.jsx";
 import { formatMessageTime } from "../utils/utlis.js";
 
 const ChatContainer = () => {
@@ -17,7 +17,7 @@ const ChatContainer = () => {
         unsubscribeFromMessages,
     } = useChatContext();
 
-    const { user, socket } = useContext(ShopContext);
+    const { user, socket } = useContext(AuthContext);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {

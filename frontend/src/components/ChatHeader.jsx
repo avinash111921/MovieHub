@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import {X} from "lucide-react"
-import {ShopContext} from "../context/ShopContext.jsx"
+import {AuthContext} from "../../context/AuthContext.jsx"
 import { useChatContext } from '../context/ChatContext.jsx'
 
 const ChatHeader = () => {
     const {selectedUser,setSelectedUser} = useChatContext();
-    const  {onlineUsers} = useContext(ShopContext);
+    const  {onlineUsers} = useContext(AuthContext);
 
   return (
      <div className="p-2.5 border-b border-base-300">

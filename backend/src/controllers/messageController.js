@@ -8,15 +8,20 @@ import { ApiError } from "../utils/ApiError.js"
 
 const getUserforSidebar = asyncHandler(async(req,res) => {
     try {
-        const loggedInUser = req.user._id;
-        const filteredUser = await User.findById(loggedInUser).select("-password -refreshToken")
+        const loggedInUserId = req.user._id;
+        const filteredUser = await User.find({
+            _id : {$ne : loggedInUserId}
+        })
+        .select("-password -refreshToken")
+
         res
         .status(200)
         .json(new ApiResponse(
             200,
-            {filteredUser},
+            filteredUser,
             "succesFully get LoggedIn User"
         ));
+
     } catch (error) {
         console.error("Error in getUserForSidebar", error.message);
         res
@@ -42,12 +47,17 @@ const getMessage  = asyncHandler(async(req,res) => {
         .status(200)
         .json(new ApiResponse(
             200,
-            {messages},
+            messages,
             "Successfully get message"
         ));
     } catch (error) {
         console.log("Error in getMessage controller ",error.message);
-        res.status(500).json(new ApiError(500,"Internal Server Error"))
+        res
+        .status(500)
+        .json(new ApiError(
+            500,
+            "Internal Server Error"
+        ))
     }
 })
 
@@ -74,7 +84,8 @@ const sendMessage = asyncHandler(async(req,res) => {
             image: messageImage?.url || ""
         })
 
-        await newMessage.save();
+        await newMessage.save({validateBeforeSave : false});
+
         const reciverSocketId = await getReciverScoketID(reciverId);
 
         if(reciverSocketId){
@@ -84,7 +95,7 @@ const sendMessage = asyncHandler(async(req,res) => {
         .status(200)
         .json(new ApiResponse(
             200,
-            {newMessage},
+            newMessage,
             "Successfully send message"
         ));
     } catch (error) {
@@ -108,19 +119,17 @@ export {
     sendMessage,
 }
 
-
-/* {
-  "status": 200,
-  "data": {
-    "newMessage": {
-      "_id": "message_id",
-      "senderId": "sender_id",
-      "reciverId": "reciver_id",
-      "text": "Hello, check these images!",
-      "imageUrls":"https://res.cloudinary.com/your_cloud_name/image/upload/v12345/img1.jpg"
-      "createdAt": "2025-03-26T12:34:56Z"
-    }
-  },
-  "message": "Message sent successfully"
-} 
-  */
+/* 
+{
+    "message": "Successfully send message",
+    "statusCode": 200,
+    "data": {
+        "_id": "660a1e7c5f1b5e0024c9d70b",
+        "senderId": "660a1e7c5f1b5e0024c9d70a",
+        "reciverId": "660a1e7c5f1b5e0024c9d70c",
+        "text": "Check this image!",
+        "image": "https://res.cloudinary.com/example/image/upload/v1700000000/sample.jpg",
+        "__v": 0
+    },
+    "success": true
+} */

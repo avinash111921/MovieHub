@@ -1,12 +1,10 @@
-import { ShopContextProvider } from './ShopContext.jsx';
-import { ChatProvider } from './ChatContext.jsx';
+import { Provider } from 'react-redux';
+import { store } from '../store/store';
 
 export const AppContextProvider = ({ children }) => {
     return (
-        <ShopContextProvider>
-            <ChatProvider>
-                {children}
-            </ChatProvider>
-        </ShopContextProvider>
+        <Provider store={store}>
+            {children}
+        </Provider>
     );
 };

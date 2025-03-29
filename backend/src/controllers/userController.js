@@ -7,8 +7,7 @@ import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshToken = async(userId) => {
     try {
-        const user = await User.findById(userId);
-
+        const user = await User.findById(userId);           
         if(!user){
             throw new ApiError(401,"User not found");
         }
@@ -16,9 +15,10 @@ const generateAccessAndRefreshToken = async(userId) => {
         const refreshToken = user.generateRefreshToken();
 
         user.refreshToken = refreshToken;
+        //Because MongoDB use his validation  before save ... if not validate not save in dataBase 
         await user.save({validateBeforeSave : false})
         return {accessToken , refreshToken};
-
+        
     } catch (error) {
         throw new ApiError(
             500,
@@ -43,9 +43,8 @@ const registerUser = asyncHandler(async (req,res) => {
         throw new ApiError(409,"user with email or userName already exists");
     }
 
-    /* yaha pai localPath milta hai 
-    multer usko local server mai upload keya hai phir yaha sai localpath lenge
-    aur cloudinary pai upload kar denge */
+    /* yaha pai localPath milta hai multer usko local server mai upload keya hai phir yaha sai localpath lenge
+    aur cloudinary pai upload kar denge */  
 
     const avatarLocalPath = req.files?.avatar?.[0]?.path;
     const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
@@ -69,21 +68,39 @@ const registerUser = asyncHandler(async (req,res) => {
     }
 
     try{
+
         const user = await User.create({
+            username:username.toLowerCase(),
             fullname,
+            email,
             avatar : avatar.url,
             coverImage : coverImage?.url || "",
-            email,
             password,
-            username:username.toLowerCase()
-        })
+        });
+
+        const {accessToken,refreshToken} = await generateAccessAndRefreshToken(user._id);
+
         const createdUser = await User.findById(user._id).select(
             "-password -refreshToken"
         );
+
         if(!createdUser){
             throw new ApiError(500,"Something went wrong while registering a User ");
         }
-        return res.status(200).json(new ApiResponse(200,createdUser,"user register successfully"));
+        const options = {
+            httpOnly : true,
+            secure : process.env.NODE_ENV === "production",
+        }
+
+        return res
+        .status(200)
+        .cookie("accessToken",accessToken,options)
+        .cookie("refreshToken",refreshToken,options)
+        .json(new ApiResponse(
+            200,
+            createdUser,
+            "user register successfully"
+        ));
     }
     catch(error){
         if(avatar){
@@ -100,9 +117,7 @@ const registerUser = asyncHandler(async (req,res) => {
 })
 
 const loginUser = asyncHandler(async (req,res) => {
-    console.log(req.body)
     const {email,password} = req.body;
-    
     if(!(email || username)){
         throw new ApiError(400,"Email or userame is required");
     }
@@ -155,12 +170,15 @@ const logOutUser = asyncHandler(async (req,res) => {
     .status(200)
     .clearCookie("accessToken",options)
     .clearCookie("refreshToken",options)
-    .json(new ApiResponse(200,{},"User logOut successfully"));
+    .json(new ApiResponse(200,{},"User logout successfully"));
 })
 
 const refreshAcessToken = asyncHandler(async(req,res) => {
 
-    const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken
+/*     console.log("Cookies:", req.cookies); // Debugging
+    console.log("Request Body:", req.body); // Debugging */
+
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
 
     if(!incomingRefreshToken){
         throw new ApiError(401,"unauthourized request 1");
@@ -205,6 +223,7 @@ const refreshAcessToken = asyncHandler(async(req,res) => {
 })
 
 const changeCurrentPassword = asyncHandler(async(req,res) => {
+
     const {oldPassword,newPassword} = req.body
     const user = await User.findById(req.user?._id);
 
@@ -222,7 +241,7 @@ const changeCurrentPassword = asyncHandler(async(req,res) => {
     user.password = newPassword;
     await user.save({validateBeforeSave:false});
     return res.status(200)
-    .json(new ApiResponse(200,{},"Password chnage successfully"))
+    .json(new ApiResponse(200,{},"Password changed successfully"))
 })
 
 const getCurrentUser = asyncHandler(async(req,res) => {

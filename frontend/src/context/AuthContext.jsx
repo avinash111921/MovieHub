@@ -4,17 +4,17 @@ import { axiosInstance } from "../utils/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-export const ShopContext = createContext();
+export const AuthContext = createContext();
 
-export const useShopContext = ({ children }) => {
-    const context = useContext(ShopContext);
+export const useAuthContext = ({ children }) => {
+    const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useShopContext must be used within a ShopContextProvider');
+        throw new Error('useAuthContext must be used within a AuthContextProvider');
     }
     return context;
 };
 
-export const ShopContextProvider = ({ children }) => {
+export const AuthContextProvider = ({ children }) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8001";
     const [token, setToken] = useState(localStorage.getItem("token") || "");
     const [user, setUser] = useState(null);
@@ -175,7 +175,7 @@ export const ShopContextProvider = ({ children }) => {
         socket,
     };
 
-    return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export default ShopContextProvider;
+export default AuthContextProvider;

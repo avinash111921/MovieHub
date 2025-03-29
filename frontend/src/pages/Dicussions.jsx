@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShopContext } from '../context/ShopContext.jsx';
+import { AuthContext } from '../../context/AuthContext.jsx';
 import { useChatContext } from "../context/ChatContext.jsx"
 import Sidebar from "../components/Sidebar.jsx"
 import NoChatSelected from "../components/NoChatSelected.jsx"
@@ -9,7 +9,7 @@ import ChatContainer from "../components/ChatContainer.jsx"
 
 function Discussions() {
   const {selectedUser} = useChatContext();
-  const { token } = useContext(ShopContext); // Get token from context
+  const { token } = useContext(AuthContext); // Get token from context
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true); // Add loading state
 

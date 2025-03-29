@@ -1,12 +1,12 @@
 import { useContext, useEffect,useState } from "react";
 import { useChatContext } from "../context/ChatContext.jsx"
-import { ShopContext } from "../context/ShopContext.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton.jsx"
 import {Users} from "lucide-react"
 
 const Sidebar = () => {
     const {getUsers,users,selectedUser,setSelectedUser,isUsersLoading} = useChatContext();
-    const {onlineUsers,user} = useContext(ShopContext);
+    const {onlineUsers,user} = useContext(AuthContext);
     const [showOnlineOnly,setShowOnlineOnly] = useState(false);
 
     useEffect(() => {

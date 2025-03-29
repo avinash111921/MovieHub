@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
-import { ShopContext } from '../context/ShopContext';
+import { AuthContext } from '../context/AuthContext.jsx';
 import ChangePassword from './ChangePassword'; '../pages/ChangePassword.jsx'
 
 const UserProfile = () => {
-    const { user, fetchUserProfile ,loading} = useContext(ShopContext);
+    const { user, fetchUserProfile ,loading} = useContext(AuthContext);
     const [formData, setFormData] = useState({
         fullname: '',
         email: '',

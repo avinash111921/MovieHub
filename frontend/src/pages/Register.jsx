@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { ShopContext } from '../context/ShopContext.jsx';
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Register = () => {
     const navigate = useNavigate();
-    const { register: registerUser, loading } = useContext(ShopContext);
+    const { register: registerUser, loading } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         fullname: '',
         email: '',

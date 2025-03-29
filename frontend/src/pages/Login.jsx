@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { ShopContext } from '../context/ShopContext.jsx';
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login, loading } = useContext(ShopContext);
+    const { login, loading } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -98,4 +98,3 @@ const Login = () => {
 };
 
 export default Login;
-

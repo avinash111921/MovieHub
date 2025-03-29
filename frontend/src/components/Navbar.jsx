@@ -1,14 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Film, LogIn, Menu, X, Star, Calendar, MessageCircle, User, LogOut, UserPlus } from 'lucide-react';
-import { ShopContext } from '../context/ShopContext.jsx';
+import { AuthContext } from '../../context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const { user, token, logout } = useContext(ShopContext);
+    const { user, token, logout } = useContext(AuthContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
