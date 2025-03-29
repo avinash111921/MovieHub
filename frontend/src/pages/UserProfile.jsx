@@ -5,6 +5,8 @@ import { AuthContext } from '../context/AuthContext.jsx';
 import ChangePassword from './ChangePassword.jsx';
 
 const UserProfile = () => {
+    const token = localStorage.getItem('token');
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5001";
     const { user, fetchUserProfile, loading } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         fullname: '',
@@ -73,8 +75,11 @@ const UserProfile = () => {
             formDataToSend.append('email', formData.email);
             formDataToSend.append('username', formData.username);
             
-            await axios.patch('/api/v1/users/update-account', formDataToSend, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            await axios.patch(`${backendUrl}/api/v1/users/update-account`, formDataToSend, {
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             toast.success('Profile updated successfully');
             await fetchUserProfile();
@@ -96,7 +101,12 @@ const UserProfile = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('avatar', formData.avatar);
 
-            await axios.patch('/api/v1/users/avatar', formDataToSend);
+            await axios.patch(`${backendUrl}/api/v1/users/avatar`, formDataToSend, {
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             toast.success('Avatar updated successfully');
             await fetchUserProfile();
             setAvatarPreview(null);
@@ -119,7 +129,12 @@ const UserProfile = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('coverImage', formData.coverImage);
 
-            await axios.patch('/api/v1/users/cover-image', formDataToSend);
+            await axios.patch(`${backendUrl}/api/v1/users/cover-image`, formDataToSend,{
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             toast.success('Cover image updated successfully');
             await fetchUserProfile();
             setCoverPreview(null);

@@ -3,6 +3,8 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const ChangePassword = () => {
+    const token = localStorage.getItem('token');
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5001";
     const [formData, setFormData] = useState({
         oldPassword: '',
         newPassword: ''
@@ -22,8 +24,11 @@ const ChangePassword = () => {
         setLoading(true);
 
         try {
-            await axios.post('/api/v1/users/change-password', formData, {
-                withCredentials: true
+            await axios.post(`${backendUrl}/api/v1/users/change-password`, formData,{
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             toast.success('Password changed successfully');

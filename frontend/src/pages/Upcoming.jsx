@@ -18,7 +18,7 @@ const Upcoming = () => {
       try {
         const response = await axiosInstance.get('/movies/upcoming-movies', {
           // Add timeout to prevent hanging requests
-          // timeout: 10000,
+          timeout: 10000,
           // Include credentials if your API requires authentication
           withCredentials: true
         });
