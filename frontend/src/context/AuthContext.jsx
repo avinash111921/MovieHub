@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 
 export const AuthContext = createContext();
 
-export const useAuthContext = ({ children }) => {
+export const useAuthContext = () => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuthContext must be used within a AuthContextProvider');
@@ -14,13 +14,12 @@ export const useAuthContext = ({ children }) => {
     return context;
 };
 
-export const AuthContextProvider = ({ children }) => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8001";
+export const AuthContextProvider = (props) => {
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5001";
     const [token, setToken] = useState(localStorage.getItem("token") || "");
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [search, setSearch] = useState("");
-    const [showSearch, setShowSearch] = useState(false);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [socket, setSocket] = useState(null);
     const navigate = useNavigate();
@@ -44,7 +43,7 @@ export const AuthContextProvider = ({ children }) => {
         setLoading(true);
         try {
             const response = await axiosInstance.get("/users/current-user");
-            if (response.data && response.data.data) {
+            if (response.status < 401 && response.data.data) {
                 setUser(response.data.data);
                 connectSocket(response.data.data._id);
             } else {
@@ -61,7 +60,7 @@ export const AuthContextProvider = ({ children }) => {
         setLoading(true);
         try {
             const response = await axiosInstance.post("/users/login", credentials);
-            const { accessToken, user } = response.data.data;
+            const { user, accessToken } = response.data.data;
 
             // Store token and user data
             setToken(accessToken);
@@ -103,7 +102,7 @@ export const AuthContextProvider = ({ children }) => {
             const response = await axiosInstance.post("/users/register", userData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            const { accessToken, user } = response.data.data;
+            const { user , accessToken } = response.data.data;
             setUser(user);
             setToken(accessToken);
             localStorage.setItem("token", accessToken);
@@ -129,7 +128,7 @@ export const AuthContextProvider = ({ children }) => {
             console.log("Socket is already connected.");
             return;
         }
-        console.log("Connecting to socket at:", backendUrl, "with userId:", userId);
+
         const socketInstance = io(
             backendUrl,
             { 
@@ -165,17 +164,13 @@ export const AuthContextProvider = ({ children }) => {
         logout,
         register,
         fetchUserProfile,
-        search,
-        setSearch,
-        showSearch,
-        setShowSearch,
         connectSocket,
         disconnectSocket,
         onlineUsers,
         socket,
     };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Film, LogIn, Menu, X, Star, Calendar, MessageCircle, User, LogOut, UserPlus } from 'lucide-react';
-import { AuthContext } from '../../context/AuthContext.jsx';
+import { AuthContext } from '../context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {

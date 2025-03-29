@@ -1,10 +1,11 @@
 import { createContext, useContext, useState } from 'react';
 import toast from "react-hot-toast";
 import { axiosInstance } from '../utils/axios.js';
+import { useAuthContext } from './AuthContext';
 
 export const ChatContext = createContext();
 
-export const useChatContext = ( {children} ) => {
+export const useChatContext = () => {
     const context = useContext(ChatContext);
     if (!context) {
         throw new Error('useChatContext must be used within a ChatProvider');
@@ -12,7 +13,9 @@ export const useChatContext = ( {children} ) => {
     return context;
 };
 
-export const ChatProvider = ({ children }) => {
+export const ChatProvider = (props) => {
+    const { user } = useAuthContext(); // Get the authenticated user from AuthContext
+
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -23,10 +26,8 @@ export const ChatProvider = ({ children }) => {
         setIsUsersLoading(true);
         try {
             const res = await axiosInstance.get('/messages/users');
-            console.log("Filtered User Data:", res.data);
-            setUsers(res.data);
+            setUsers(res.data.data);
         } catch (error) {
-            console.error("Error fetching users:", error?.response || error);
             toast.error(error?.response?.data?.message || "Failed to fetch users");
         } finally {
             setIsUsersLoading(false);
@@ -34,13 +35,12 @@ export const ChatProvider = ({ children }) => {
     };
 
     const getMessages = async (userId) => {
+        if (!userId) return;
         setIsMessagesLoading(true);
         try {
             const res = await axiosInstance.get(`/messages/${userId}`);
-            console.log("API Response getMessages:", res.data);
-            setMessages(res.data);
+            setMessages(res.data.data);
         } catch (error) {
-            console.error("Error fetching messages:", error);
             toast.error(error?.response?.data?.message || "Failed to fetch messages");
         } finally {
             setIsMessagesLoading(false);
@@ -48,12 +48,42 @@ export const ChatProvider = ({ children }) => {
     };
 
     const sendMessage = async (messageData) => {
+        const formData = new FormData();
+        formData.append("text", messageData.text);
+        if (messageData.image) {
+            formData.append("messageImage", messageData.image);
+        }
+
+        const tempMessage = {
+            _id: Date.now().toString(),
+            senderId: user._id, // Using authenticated user's ID
+            reciverId: selectedUser._id,
+            text: messageData.text,
+            image: messageData.image ? URL.createObjectURL(messageData.image) : "",
+            createdAt: new Date().toISOString(),
+            isPending: true
+        };
+
+        setMessages(prevMessages => [...prevMessages, tempMessage]);
+
         try {
-            const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-            console.log("API Response of sendMessage:", res.data);
-            setMessages(prevMessages => [...prevMessages, res.data]);
+            const res = await axiosInstance.post(
+                `/messages/send/${selectedUser._id}`, 
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
+            setMessages(prevMessages =>
+                prevMessages.map(msg =>
+                    msg._id === tempMessage._id ? res.data.data : msg
+                )
+            );
+            return res.data.data;
         } catch (error) {
+            setMessages(prevMessages => 
+                prevMessages.filter(msg => msg._id !== tempMessage._id)
+            );
             toast.error(error?.response?.data?.message || "Failed to send message");
+            throw error;
         }
     };
 
@@ -79,17 +109,19 @@ export const ChatProvider = ({ children }) => {
         selectedUser,
         isUsersLoading,
         isMessagesLoading,
+        setSelectedUser,
         getUsers,
         getMessages,
         sendMessage,
         subscribeToMessages,
-        unsubscribeFromMessages,
-        setSelectedUser
+        unsubscribeFromMessages
     };
 
     return (
         <ChatContext.Provider value={value}>
-            {children}
+            {props.children}
         </ChatContext.Provider>
     );
 };
+
+export default ChatProvider;

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import {X} from "lucide-react"
-import {AuthContext} from "../../context/AuthContext.jsx"
+import {AuthContext} from "../context/AuthContext.jsx"
 import { useChatContext } from '../context/ChatContext.jsx'
 
 const ChatHeader = () => {

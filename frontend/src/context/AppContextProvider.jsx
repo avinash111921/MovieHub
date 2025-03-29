@@ -1,10 +1,14 @@
-import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import { AuthContextProvider } from './AuthContext';
+import { ChatProvider } from './ChatContext';
 
 export const AppContextProvider = ({ children }) => {
     return (
-        <Provider store={store}>
-            {children}
-        </Provider>
+        <AuthContextProvider>
+            <ChatProvider>
+                {children}
+            </ChatProvider>
+        </AuthContextProvider>
     );
 };
+
+export default AppContextProvider;

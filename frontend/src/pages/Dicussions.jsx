@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext.jsx';
+import { AuthContext } from '../context/AuthContext.jsx';
 import { useChatContext } from "../context/ChatContext.jsx"
 import Sidebar from "../components/Sidebar.jsx"
 import NoChatSelected from "../components/NoChatSelected.jsx"

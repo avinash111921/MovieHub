@@ -46,15 +46,19 @@ export { router as userRouter };
     "message": "user register successfully",
     "statusCode": 200,
     "data": {
-        "_id": "67e6fabb678a8d5818ed8b86",
-        "username": "apexninja",
-        "fullname": "anshu",
-        "email": "anshu@hmail.com",
-        "avatar": "http://res.cloudinary.com/dojfug7t8/image/upload/v1743190711/wp1wmjs6q4dpos0e44dq.png",
-        "coverImage": "http://res.cloudinary.com/dojfug7t8/image/upload/v1743190713/w3ugb5zwolt4wkdridji.png",
-        "createdAt": "2025-03-28T19:38:35.210Z",
-        "updatedAt": "2025-03-28T19:38:35.567Z",
-        "__v": 0
+        "user": {
+            "_id": "67e7af94c261ded6fd6742fc",
+            "username": "aditya1010",
+            "fullname": "aditya",
+            "email": "aditya@gmail.com",
+            "avatar": "http://res.cloudinary.com/dojfug7t8/image/upload/v1743237008/by5dcamhv27c0zd36cih.png",
+            "coverImage": "http://res.cloudinary.com/dojfug7t8/image/upload/v1743237010/xcgin4mt9lmoj8hhcx1t.png",
+            "createdAt": "2025-03-29T08:30:12.816Z",
+            "updatedAt": "2025-03-29T08:30:13.096Z",
+            "__v": 0
+        },
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U3YWY5NGMyNjFkZWQ2ZmQ2NzQyZmMiLCJlbWFpbCI6ImFkaXR5YUBnbWFpbC5jb20iLCJ1c2VybmFtZSI6ImFkaXR5YTEwMTAiLCJmdWxsbmFtZSI6ImFkaXR5YSIsImlhdCI6MTc0MzIzNzAxMywiZXhwIjoxNzQ0MTAxMDEzfQ.WKwF5Bijvu2On3no8efzLNWlf7gFIX1csmV1GL4HErs",
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U3YWY5NGMyNjFkZWQ2ZmQ2NzQyZmMiLCJpYXQiOjE3NDMyMzcwMTMsImV4cCI6MTc0NTgyOTAxM30.q1DVLqAMvIgB7Drei7a1vUGuWSVuqlsNeTK5PU7owKg"
     },
     "success": true
 }

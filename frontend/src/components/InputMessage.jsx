@@ -8,34 +8,40 @@ const InputMessage = () => {
     const [text,setText] = useState("");
     const [imagePreview,setImagePreview] = useState(null);
     const fileInputRef = useRef(null);
-    const {sendMessage} = useChatContext();
+    const { sendMessage } = useChatContext();
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
+        if(!file) return;
         if(!file.type.startsWith("image/")){
             toast.error("Please select an image file");
             return;
         }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
     }
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+
     const removeImage = () => {
-        setImagePreview(null);
-        if(fileInputRef.current){
-            fileInputRef.current.value = "";
-        }
+      setImagePreview(null);
+      if(fileInputRef.current){
+          fileInputRef.current.value = "";
+      }
     }
+
     const handleSendMessage = (e) => {
         e.preventDefault();
-        if(!text.trim() && !imagePreview) return;
+        if(!text.trim() && !imagePreview){
+          toast.error("Cannot send an empty message");
+          return;
+        }
         try {
             sendMessage({
                 text : text.trim() || null,
                 image :imagePreview,
-            })
+            });
             setText("");
             setImagePreview(null);
             if(fileInputRef.current) fileInputRef.current.value = "";

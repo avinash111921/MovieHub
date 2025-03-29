@@ -1,6 +1,6 @@
 import { useContext, useEffect,useState } from "react";
 import { useChatContext } from "../context/ChatContext.jsx"
-import { AuthContext } from "../../context/AuthContext.jsx";
+import { AuthContext } from "../context/AuthContext.jsx";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton.jsx"
 import {Users} from "lucide-react"
 
@@ -11,7 +11,7 @@ const Sidebar = () => {
 
     useEffect(() => {
         getUsers();
-    }, [getUsers]);
+    }, []);
 
     const filteredUsers = showOnlineOnly ? users.filter((u) => onlineUsers.includes(u._id)) : users;
     const onlineCount = user ? onlineUsers.filter((onlineUser) => onlineUser !== user._id).length : onlineUsers.length;
