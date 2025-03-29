@@ -9,7 +9,7 @@ const MovieDetails = () => {
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
-      const apiKey = "b13184b3"; // Your OMDb API Key
+      const apiKey = import.meta.env.VITE_OMDB_API_KEY; // Your OMDb API Key
       const url = `https://www.omdbapi.com/?i=${id}&apikey=${apiKey}`;
 
       try {

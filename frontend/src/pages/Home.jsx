@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import MovieCard from '../components/MovieCard.jsx';
 import { Search, TrendingUp, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const API_KEY = "b13184b3"; // Your OMDb API key
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY; // Your OMDb API key
 const GENRES = ['action', 'comedy', 'thriller', 'romance', 'sci-fi', 'adventure'];
 
 // Video URL for hero background

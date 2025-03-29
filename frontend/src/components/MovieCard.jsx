@@ -19,7 +19,7 @@ function MovieCard({ movie, index = 0 }) {
     setLoading(true);
 
     try {
-      const apiKey = "b13184b3";
+      const apiKey = import.meta.env.VITE_OMDB_API_KEY;
       const response = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&plot=full&apikey=${apiKey}`);
       const data = await response.json();
       
