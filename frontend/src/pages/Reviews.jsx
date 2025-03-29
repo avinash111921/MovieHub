@@ -43,9 +43,9 @@ function Reviews() {
                   <span className="text-gray-600">by {review.author} • {review.date}</span>
                 </div>
                 <p className="text-gray-700">{review.content}</p>
-                {/* <button className="mt-4 text-purple-600 font-semibold hover:text-purple-800">
+                <button className="mt-4 text-purple-600 font-semibold hover:text-purple-800">
                   Read full review →
-                </button> */}
+                </button>
               </div>
             </div>
           </div>
