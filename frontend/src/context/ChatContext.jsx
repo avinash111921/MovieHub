@@ -48,22 +48,29 @@ export const ChatProvider = (props) => {
     };
 
     const sendMessage = async (messageData) => {
+        if (!selectedUser) return;
+        
         const formData = new FormData();
-        formData.append("text", messageData.text);
+        formData.append("text", messageData.text || "");
+        
+        // Handle image file
         if (messageData.image) {
             formData.append("messageImage", messageData.image);
         }
 
+        // Create temporary message with local image preview
         const tempMessage = {
             _id: Date.now().toString(),
-            senderId: user._id, // Using authenticated user's ID
+            senderId: user._id,
             reciverId: selectedUser._id,
-            text: messageData.text,
+            text: messageData.text || "",
+            // Use URL.createObjectURL only for preview, not for sending
             image: messageData.image ? URL.createObjectURL(messageData.image) : "",
             createdAt: new Date().toISOString(),
             isPending: true
         };
 
+        // Add temporary message to the UI immediately for better UX
         setMessages(prevMessages => [...prevMessages, tempMessage]);
 
         try {
@@ -72,13 +79,17 @@ export const ChatProvider = (props) => {
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
+            
+            // Replace the temporary message with the real one from server
             setMessages(prevMessages =>
                 prevMessages.map(msg =>
                     msg._id === tempMessage._id ? res.data.data : msg
                 )
             );
+            
             return res.data.data;
         } catch (error) {
+            // Remove the temporary message if sending fails
             setMessages(prevMessages => 
                 prevMessages.filter(msg => msg._id !== tempMessage._id)
             );

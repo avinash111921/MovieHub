@@ -1,6 +1,5 @@
 import { useChatContext } from "../context/ChatContext";
 import { useContext, useEffect, useRef } from "react";
-
 import ChatHeader from "./ChatHeader";
 import InputMessage from "./InputMessage";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
@@ -25,15 +24,15 @@ const ChatContainer = () => {
         getMessages(selectedUser._id);
         subscribeToMessages(socket);
         return () => unsubscribeFromMessages(socket);
-    }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+    }, [selectedUser?._id, socket]); // Removed function dependencies that cause re-renders
 
     useEffect(() => {
         if (messagesEndRef.current && messages) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
-    }, [messages]);
+    },[messages]);
 
-    if (isMessagesLoading) {
+    if (isMessagesLoading) { //It is checkPoint 
         return (
             <div className="flex-1 flex flex-col overflow-auto">
                 <ChatHeader />
@@ -47,7 +46,7 @@ const ChatContainer = () => {
         <div className="flex-1 flex flex-col overflow-auto">
             <ChatHeader />
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
                 {messages.map((message, index) => (
                     <div
                         key={message._id}
@@ -65,6 +64,7 @@ const ChatContainer = () => {
                                     }
                                     alt="profile pic"
                                     className="w-full h-full object-cover"
+                                    loading="lazy"
                                 />
                             </div>
 
@@ -75,13 +75,26 @@ const ChatContainer = () => {
                                 </div>
                                 <div className={`p-3 rounded-lg ${message.senderId === user._id ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-900"}`}>
                                     {message.image && (
-                                        <img
-                                            src={message.image}
-                                            alt="Attachment"
-                                            className="max-w-full rounded-md mb-2"
-                                        />
+                                        <div className="mb-2">
+                                            <img
+                                                src={message.image}
+                                                alt="Attachment"
+                                                className="max-w-full rounded-md"
+                                                loading="lazy"
+                                                onError={(e) => {
+                                                    console.error("Image failed to load:", e);
+                                                    e.target.onerror = null;
+                                                    e.target.src = "/placeholder-image.png";
+                                                }}
+                                            />
+                                        </div>
                                     )}
                                     {message.text && <p>{message.text}</p>}
+                                    {message.isPending && (
+                                        <span className="ml-2 text-xs opacity-70">
+                                            Sending...
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>

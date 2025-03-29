@@ -7,6 +7,7 @@ import { X, Image, Send } from "lucide-react";
 const InputMessage = () => {
     const [text,setText] = useState("");
     const [imagePreview,setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
     const fileInputRef = useRef(null);
     const { sendMessage } = useChatContext();
 
@@ -17,6 +18,11 @@ const InputMessage = () => {
             toast.error("Please select an image file");
             return;
         }
+        
+        // Store the actual file for sending
+        setImageFile(file);
+        
+        // Create preview
         const reader = new FileReader();
         reader.onloadend = () => {
           setImagePreview(reader.result);
@@ -26,27 +32,30 @@ const InputMessage = () => {
 
     const removeImage = () => {
       setImagePreview(null);
+      setImageFile(null);
       if(fileInputRef.current){
           fileInputRef.current.value = "";
       }
     }
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
-        if(!text.trim() && !imagePreview){
+        if(!text.trim() && !imageFile){
           toast.error("Cannot send an empty message");
           return;
         }
         try {
-            sendMessage({
-                text : text.trim() || null,
-                image :imagePreview,
+            await sendMessage({
+                text: text.trim() || "",
+                image: imageFile,
             });
             setText("");
             setImagePreview(null);
+            setImageFile(null);
             if(fileInputRef.current) fileInputRef.current.value = "";
         } catch (error) {
             console.log("Error sending message", error);
+            toast.error("Failed to send message");
         }
     }
     return (
@@ -99,10 +108,9 @@ const InputMessage = () => {
             </div>
             <button
               type="submit"
-              className="btn btn-sm btn-circle"
-              disabled={!text.trim() && !imagePreview}
+              className="btn btn-circle btn-primary"
             >
-              <Send size={22} />
+              <Send size={20} />
             </button>
           </form>
         </div>

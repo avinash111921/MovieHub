@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.jsx';
-import ChangePassword from './ChangePassword'; '../pages/ChangePassword.jsx'
+import ChangePassword from './ChangePassword.jsx';
 
 const UserProfile = () => {
-    const { user, fetchUserProfile ,loading} = useContext(AuthContext);
+    const { user, fetchUserProfile, loading } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         fullname: '',
         email: '',
@@ -20,10 +20,6 @@ const UserProfile = () => {
     // Refs for file inputs
     const avatarInputRef = useRef(null);
     const coverImageInputRef = useRef(null);
-
-    useEffect(() => {
-        fetchUserProfile();
-    }, []);
 
     useEffect(() => {
         if (user) {
@@ -45,7 +41,6 @@ const UserProfile = () => {
         }));
     };
     
-
     const handleFileChange = (e) => {
         const { name, files } = e.target;
         if (files.length > 0) {
@@ -81,9 +76,7 @@ const UserProfile = () => {
             await axios.patch('/api/v1/users/update-account', formDataToSend, {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
-            // console.log(response.data.data);
             toast.success('Profile updated successfully');
-            // console.log("Updated User Data:", response.data.data);
             await fetchUserProfile();
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to update profile');
@@ -105,7 +98,7 @@ const UserProfile = () => {
 
             await axios.patch('/api/v1/users/avatar', formDataToSend);
             toast.success('Avatar updated successfully');
-            fetchUserProfile();
+            await fetchUserProfile();
             setAvatarPreview(null);
             setFormData(prev => ({ ...prev, avatar: null }));
         } catch (error) {
@@ -128,7 +121,7 @@ const UserProfile = () => {
 
             await axios.patch('/api/v1/users/cover-image', formDataToSend);
             toast.success('Cover image updated successfully');
-            fetchUserProfile();
+            await fetchUserProfile();
             setCoverPreview(null);
             setFormData(prev => ({ ...prev, coverImage: null }));
         } catch (error) {
@@ -137,6 +130,7 @@ const UserProfile = () => {
             setUpdating(false);
         }
     };
+    
     if (loading) return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
     if (!user) return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
 
@@ -208,58 +202,50 @@ const UserProfile = () => {
                         accept="image/*"
                         className="hidden"
                     />
-                    
-                    {/* Personal Info Form */}
-                    <form onSubmit={handleUpdateProfile} className="mb-8">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Full Name
-                                </label>
-                                <input
-                                    type="text"
-                                    name="fullname"
-                                    value={formData.fullname}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    required
-                                />
-                            </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Email Address
-                                </label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    Username
-                                </label>
-                                <input
-                                    type="text"
-                                    name="username"
-                                    value={formData.username}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                />
-                            </div>
+                    {/* Profile Update Form */}
+                    <form onSubmit={handleUpdateProfile} className="space-y-6">
+                        <div>
+                            <label htmlFor="fullname" className="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input
+                                type="text"
+                                name="fullname"
+                                id="fullname"
+                                value={formData.fullname}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                            />
                         </div>
                         
-                        <div className="mt-4">
+                        <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                id="username"
+                                value={formData.username}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                            />
+                        </div>
+                        
+                        <div>
                             <button
                                 type="submit"
                                 disabled={updating}
-                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
                                 {updating ? 'Updating...' : 'Update Profile'}
                             </button>
@@ -275,4 +261,4 @@ const UserProfile = () => {
     );
 };
 
-export default UserProfile; 
+export default UserProfile;

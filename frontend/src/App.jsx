@@ -15,30 +15,18 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import ChangePassword from './pages/ChangePassword.jsx';
-import { axiosInstance } from "../src/utils/axios.js"; 
+import { useAuthContext } from "./context/AuthContext.jsx";
 
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = React.useState(null);
+    const { user, loading } = useAuthContext();
 
-    React.useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                await axiosInstance.get('/users/current-user');
-                setIsAuthenticated(true);
-            } catch (error) {
-                setIsAuthenticated(false);
-            }
-        };
-        checkAuth();
-    }, []);
-
-    if (isAuthenticated === null) {
+    if (loading) {
         return <div>Loading...</div>;
     }
 
-    return isAuthenticated ? children : <Navigate to="/login" />;
+    return user ? children : <Navigate to="/login" />;
 };
 
 const App = () => {

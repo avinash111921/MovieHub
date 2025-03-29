@@ -19,7 +19,7 @@ export const AuthContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5001";
     const [token, setToken] = useState(localStorage.getItem("token") || "");
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); 
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [socket, setSocket] = useState(null);
     const navigate = useNavigate();
@@ -28,18 +28,49 @@ export const AuthContextProvider = (props) => {
     useEffect(() => {
         if (token) {
             axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            localStorage.setItem("token", token);
         } else {
             delete axiosInstance.defaults.headers.common["Authorization"];
+            localStorage.removeItem("token");
         }
+    }, [token]);
+
+    // Listen for storage events (when localStorage changes in another tab)
+    useEffect(() => {
+        const handleStorageChange = (e) => {
+            if (e.key === "token") {
+                // If token was removed in another tab
+                if (!e.newValue) {
+                    setToken("");
+                    setUser(null);
+                    disconnectSocket();
+                } 
+                // If token was added/changed in another tab
+                else if (e.newValue !== token) {
+                    setToken(e.newValue);
+                }
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
     }, [token]);
 
     // Fetch user profile when token is available
     useEffect(() => {
-        if (token) fetchUserProfile();
+        if (token) {
+            fetchUserProfile();
+        } else {
+            setLoading(false); 
+        }
     }, [token]);
 
     const fetchUserProfile = async () => {
-        if (!token) return;
+        if (!token) {
+            setLoading(false);
+            return;
+        }
+        
         setLoading(true);
         try {
             const response = await axiosInstance.get("/users/current-user");
@@ -48,9 +79,15 @@ export const AuthContextProvider = (props) => {
                 connectSocket(response.data.data._id);
             } else {
                 console.error("Unexpected response format:", response.data);
+                // Clear invalid token
+                setToken("");
             }
         } catch (error) {
             console.error("Failed to fetch user profile:", error);
+            // Clear invalid token on auth errors
+            if (error.response && error.response.status === 401) {
+                setToken("");
+            }
         } finally {
             setLoading(false);
         }
