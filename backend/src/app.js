@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv"
-import axios from "axios";
+
 
 dotenv.config({
     path : "./.env",
@@ -28,11 +28,13 @@ app.use(cookieParser());
 
 // Routes
 import {userRouter} from "./routes/user.routes.js";
-import {messageRouter} from "./routes/message.routes.js"
+import {messageRouter} from "./routes/message.routes.js";
 import {upcomingMovieRouter} from "./routes/upcomingMovie.routes.js";
+import {tweetRouter} from "./routes/tweet.routes.js";
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/movies", upcomingMovieRouter);
+app.use("/api/v1/tweet", tweetRouter);
 
-export {app};
+export { app };
