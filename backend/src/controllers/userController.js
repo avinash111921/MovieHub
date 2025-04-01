@@ -28,48 +28,44 @@ const generateAccessAndRefreshToken = async(userId) => {
 }
 
 const registerUser = asyncHandler(async (req,res) => {
-
-    const {fullname,email,password,username} = req.body;
-
-    if([fullname,username,email,password].some((field) => field?.trim() === "")){
-        throw new ApiError(400,"All fields are required");
-    }
-
-    const existedUser = await User.findOne({
-        $or : [{username},{email}]
-    });
-
-    if(existedUser){
-        throw new ApiError(409,"user with email or userName already exists");
-    }
-
-    /* yaha pai localPath milta hai multer usko local server mai upload keya hai phir yaha sai localpath lenge
-    aur cloudinary pai upload kar denge */  
-
-    const avatarLocalPath = req.files?.avatar?.[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
-
-    if(!avatarLocalPath){
-        throw new ApiError(404,"Avatar file is Missing");
-    }  
-
-    let avatar;
     try {
-        avatar = await uploadOnCloudinary(avatarLocalPath);
-    } catch (error) {
-        throw new ApiError(500,"failed to upload Avatar");
-    }
+        const {fullname,email,password,username} = req.body;
 
-    let coverImage = null;
-    if (coverImageLocalPath) {
-        try {
-            coverImage = await uploadOnCloudinary(coverImageLocalPath);
-        } catch (error) {
-            console.error("Failed to upload cover image, but continuing with registration");
+        if([fullname,username,email,password].some((field) => field?.trim() === "")){
+            throw new ApiError(400,"All fields are required");
         }
-    }
 
-    try{
+        const existedUser = await User.findOne({
+            $or : [{username},{email}]
+        });
+
+        if(existedUser){
+            throw new ApiError(409,"user with email or userName already exists");
+        }
+
+        const avatarLocalPath = req.files?.avatar?.[0]?.path;
+        const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+
+        if(!avatarLocalPath){
+            throw new ApiError(404,"Avatar file is Missing");
+        }  
+
+        let avatar;
+        try {
+            avatar = await uploadOnCloudinary(avatarLocalPath);
+        } catch (error) {
+            console.error("Cloudinary upload error:", error);
+            throw new ApiError(500,"failed to upload Avatar");
+        }
+
+        let coverImage = null;
+        if (coverImageLocalPath) {
+            try {
+                coverImage = await uploadOnCloudinary(coverImageLocalPath);
+            } catch (error) {
+                console.error("Failed to upload cover image:", error);
+            }
+        }
 
         const user = await User.create({
             username:username.toLowerCase(),
@@ -89,6 +85,7 @@ const registerUser = asyncHandler(async (req,res) => {
         if(!createdUser){
             throw new ApiError(500,"Something went wrong while registering a User ");
         }
+
         const options = {
             httpOnly : true,
             secure : process.env.NODE_ENV === "production",
@@ -101,20 +98,14 @@ const registerUser = asyncHandler(async (req,res) => {
         .json(new ApiResponse(
             200,
             {user : createdUser,accessToken,refreshToken},
-            "user register successfully"
+            null
         ));
-    }
-    catch(error){
-        if(avatar){
-            await deleteFromCloudinary(avatar.public_id);
+    } catch (error) {
+        console.error("Registration error:", error);
+        if (error instanceof ApiError) {
+            throw error;
         }
-        if(coverImage){
-            await deleteFromCloudinary(coverImage.public_id);
-        }
-        throw new ApiError(
-            500,
-            "Something went wrong while resgistering a user and images are deleted succesfully"
-        )
+        throw new ApiError(500, "Something went wrong during registration");
     }
 })
 
