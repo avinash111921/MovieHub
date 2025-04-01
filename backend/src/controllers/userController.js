@@ -60,11 +60,13 @@ const registerUser = asyncHandler(async (req,res) => {
         throw new ApiError(500,"failed to upload Avatar");
     }
 
-    let coverImage;
-    try {
-        coverImage = await uploadOnCloudinary(coverImageLocalPath);
-    } catch (error) {
-        throw new ApiError(500,"Failed to upload CoverImage");
+    let coverImage = null;
+    if (coverImageLocalPath) {
+        try {
+            coverImage = await uploadOnCloudinary(coverImageLocalPath);
+        } catch (error) {
+            console.error("Failed to upload cover image, but continuing with registration");
+        }
     }
 
     try{

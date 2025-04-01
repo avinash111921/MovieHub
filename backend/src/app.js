@@ -37,4 +37,16 @@ app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/movies", upcomingMovieRouter);
 app.use("/api/v1/tweet", tweetRouter);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    
+    if (err instanceof ApiError) {
+        return res.status(err.statusCode).json(new ApiResponse(err.statusCode, null, err.message));
+    }
+
+    // For other errors, return a generic error message
+    return res.status(500).json(new ApiResponse(500, null, "Something went wrong. Please try again later."));
+});
+
 export { app };
