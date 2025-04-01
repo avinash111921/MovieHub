@@ -11,7 +11,7 @@ const app = express();
 
 // CORS configuration - must be before any routes
 app.use(cors({
-    origin: true, // Allow requests from any origin during development
+    origin: ['https://moviehub-frontend.onrender.com', 'http://localhost:5173'], // Allow both production and development origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
