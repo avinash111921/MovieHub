@@ -6,7 +6,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.CORS_ORIGIN,
+        origin: ['https://moviehub-frontend.onrender.com', 'http://localhost:5173'],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true
     },
