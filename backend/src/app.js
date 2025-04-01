@@ -3,28 +3,32 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv"
 
-
 dotenv.config({
     path : "./.env",
 })
+
 const app = express();
 
-// CORS configuration - must be before any routes
-app.use(cors({
+// CORS configuration
+const corsOptions = {
     origin: ['https://moviehub-frontend.onrender.com', 'http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'Cookie'],
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
-    optionsSuccessStatus: 204
-}));
+    optionsSuccessStatus: 204,
+    preflightContinue: false,
+    maxAge: 86400 // 24 hours
+};
+
+// CORS middleware must be before any routes
+app.use(cors(corsOptions));
 
 // Common middleware
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static("public"));
 app.use(cookieParser());
-
 
 // Routes
 import {userRouter} from "./routes/user.routes.js";
