@@ -9,8 +9,12 @@ import {
 } from "../controllers/tweetController.js";
 import {verifyJWT} from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import cors from 'cors';
 
 const router = Router();
+
+// Enable CORS
+router.use(cors());
 
 // Public routes
 router.route("/").post(
@@ -24,15 +28,16 @@ router.route("/").post(
     createTweet
 );
 
+// Public route to get all tweets with populated user data
 router.route("/tweets").get(getAllTweets);
-router.route("/tweets/user/:userId").get(verifyJWT, getUserTweets);
 
 // Protected routes
 router.use(verifyJWT);
 
+router.route("/tweets/user/:userId").get(getUserTweets);
+
 router.route("/:tweetId").patch(updateTweet).delete(deleteTweet);
 router.route("/poster/:tweetId").patch(upload.single("poster"),updatePoster);
-
 
 export { router as tweetRouter };
 
@@ -174,5 +179,4 @@ export { router as tweetRouter };
         }
     ],
     "success": true
-}
-*/
+}*/

@@ -49,17 +49,25 @@ const createTweet = asyncHandler(async (req,res) => {
 })
 
 const getAllTweets = asyncHandler(async(req,res) => {
-    const tweets = await Tweet.find({})
-    if(tweets.length === 0) {
-        throw new ApiError(404,"No tweets found");
+    try {
+        const tweets = await Tweet.find({})
+            .populate('owner', 'username avatar')
+            .sort({ createdAt: -1 });
+
+        if(tweets.length === 0) {
+            throw new ApiError(404,"No tweets found");
+        }
+
+        return res
+            .status(200)
+            .json(new ApiResponse(
+                200,
+                tweets,
+                "Successfully fetched tweets"
+            ));
+    } catch (error) {
+        throw new ApiError(500, "Failed to fetch tweets: " + error.message);
     }
-    return res
-    .status(200)
-    .json(new ApiResponse(
-        200,
-        tweets,
-        "Successfully fetched tweets"
-    ));
 })
 
 const getUserTweets = asyncHandler(async (req, res) => {
