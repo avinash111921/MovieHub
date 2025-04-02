@@ -54,16 +54,17 @@ const registerUser = asyncHandler(async (req,res) => {
         try {
             avatar = await uploadOnCloudinary(avatarLocalPath);
         } catch (error) {
-            console.error("Cloudinary upload error:", error);
+            // console.error("Cloudinary upload error:", error);
             throw new ApiError(500,"failed to upload Avatar");
         }
 
-        let coverImage = null;
+        let coverImage;
         if (coverImageLocalPath) {
             try {
                 coverImage = await uploadOnCloudinary(coverImageLocalPath);
             } catch (error) {
-                console.error("Failed to upload cover image:", error);
+                // console.error("Failed to upload cover image:", error);
+                throw new ApiError(500,"failed to upload Cover Image");
             }
         }
 
@@ -163,7 +164,7 @@ const logOutUser = asyncHandler(async (req,res) => {
     );
     const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",   //true in production and false in development
     }
 
     return res

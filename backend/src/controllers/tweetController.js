@@ -51,8 +51,6 @@ const createTweet = asyncHandler(async (req,res) => {
 const getAllTweets = asyncHandler(async(req,res) => {
     try {
         const tweets = await Tweet.find({})
-            .populate('owner', 'username avatar')
-            .sort({ createdAt: -1 });
 
         if(tweets.length === 0) {
             throw new ApiError(404,"No tweets found");
@@ -70,23 +68,20 @@ const getAllTweets = asyncHandler(async(req,res) => {
     }
 })
 
-const getUserTweets = asyncHandler(async (req, res) => {
-    const { userId } = req.params;
+// const getUserTweets = asyncHandler(async (req, res) => {
+//     const { userId } = req.params;
     
-    try {
-        const tweets = await Tweet.find({ owner: userId })
-            .populate('owner', 'name')
-            .sort({ createdAt: -1 });
+//     try {
+//         const tweets = await Tweet.find({ owner: userId })
 
-        res.status(200).json(new ApiResponse(200,tweets,"Successfully fetched user tweets"));
-    } catch (error) {
-        throw new Error('Failed to fetch user tweets');
-    }
-});
+//         res.status(200).json(new ApiResponse(200,tweets,"Successfully fetched user tweets"));
+//     } catch (error) {
+//         throw new Error('Failed to fetch user tweets');
+//     }
+// });
 
 const updateTweet = asyncHandler(async(req,res) => {
     const {tweetId} = req.params;
-    // const {userId} = req.user?._id;
     const {content} = req.body;
     if(!isValidObjectId(tweetId)) {
         throw new ApiError(400,"Invalid tweet id");
@@ -115,9 +110,19 @@ const updateTweet = asyncHandler(async(req,res) => {
 const updatePoster = asyncHandler(async(req,res) => {
     const posterLocalPath = req.file?.path;
     const {tweetId} = req.params;
+
     if(!posterLocalPath){
         throw new ApiError(400,"Poster file is missing");
     }
+
+    // Fetch the old tweet first to get the old poster URL
+    const existingTweet = await Tweet.findById(tweetId);
+    if (!existingTweet) {
+        throw new ApiError(404, "Tweet not found");
+    }
+
+    const oldPosterURL = existingTweet.poster; // Store old URL before updating
+
     const poster = await uploadOnCloudinary(posterLocalPath)
     if(!poster.url){
         throw new ApiError(400,"error while uploading poster")
@@ -130,11 +135,13 @@ const updatePoster = asyncHandler(async(req,res) => {
             }
     },{new : true})
 
-    const oldPosterURL = tweet?.poster
-    const deleteoldPoster = await deleteFromCloudinary(oldPosterURL)
-    if(!deleteoldPoster){
-        throw new ApiError(400,"Error while delete old Poster");
+    if (oldPosterURL) {
+        const deleteOldPoster = await deleteFromCloudinary(oldPosterURL);
+        if (!deleteOldPoster) {
+            throw new ApiError(400, "Error while deleting old poster");
+        }
     }
+
     return res
     .status(200)
     .json(new ApiResponse(
@@ -189,7 +196,7 @@ const deleteTweet = asyncHandler(async(req,res)=> {
 
 export {
     createTweet,
-    getUserTweets,
+    // getUserTweets,
     updateTweet,
     deleteTweet,
     getAllTweets,

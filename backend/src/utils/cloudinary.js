@@ -30,10 +30,6 @@ const uploadOnCloudinary = async(localFilePath) => {
         return null;
     }
 }
-const uploadMultipleOnCloudinary = async (localFilePaths) => {
-    const uploadPromises = localFilePaths.map(uploadOnCloudinary);
-    return Promise.all(uploadPromises);
-};
 const getPublicId = (url) => {
     const urlWithoutParams = url.split("?")[0];
     const parts = urlWithoutParams.split("/");
@@ -53,4 +49,4 @@ const deleteFromCloudinary = async (url) => {
     }
 }
 
-export {uploadOnCloudinary, deleteFromCloudinary,uploadMultipleOnCloudinary};
+export {uploadOnCloudinary, deleteFromCloudinary};

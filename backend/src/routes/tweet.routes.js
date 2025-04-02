@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
     createTweet,
     getAllTweets,
-    getUserTweets,
+    // getUserTweets,
     updateTweet,
     deleteTweet,
     updatePoster
@@ -34,7 +34,7 @@ router.route("/tweets").get(getAllTweets);
 // Protected routes
 router.use(verifyJWT);
 
-router.route("/tweets/user/:userId").get(getUserTweets);
+// router.route("/user/:userId").get(getUserTweets);
 
 router.route("/:tweetId").patch(updateTweet).delete(deleteTweet);
 router.route("/poster/:tweetId").patch(upload.single("poster"),updatePoster);

@@ -36,7 +36,6 @@ const Reviews = () => {
       toast.error('Review content is required');
       return;
     }
-
     try {
       setLoading(true);
       const formDataToSend = new FormData();
