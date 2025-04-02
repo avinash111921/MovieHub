@@ -9,12 +9,9 @@ import {
 } from "../controllers/tweetController.js";
 import {verifyJWT} from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import cors from 'cors';
 
 const router = Router();
 
-// Enable CORS
-router.use(cors());
 
 // Public routes
 router.route("/").post(
