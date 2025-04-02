@@ -13,7 +13,6 @@ function MovieCard({ movie, index = 0 }) {
     ? movie.Poster 
     : "https://via.placeholder.com/300x450?text=No+Poster+Available";
 
-
   const fetchMovieDetails = async () => {
     if (detailsData) return; // Don't fetch if we already have data
     setLoading(true);
@@ -36,6 +35,7 @@ function MovieCard({ movie, index = 0 }) {
 
   const handleDetailsClick = (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent card click event from triggering
     setShowDetails(true);
     fetchMovieDetails();
   };
@@ -43,7 +43,7 @@ function MovieCard({ movie, index = 0 }) {
   return (
     <>
       <motion.div 
-        className="bg-white rounded-xl shadow-lg overflow-hidden h-full hover:shadow-xl transition-shadow"
+        className="bg-white rounded-xl shadow-lg overflow-hidden h-full hover:shadow-xl transition-shadow relative"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ 
@@ -57,7 +57,7 @@ function MovieCard({ movie, index = 0 }) {
         }}
         whileTap={{ scale: 0.97 }}
       >
-        <div className="block relative group">
+        <div className="block relative">
           <div className="aspect-[2/3] overflow-hidden">
             <motion.img 
               src={posterUrl} 
@@ -69,20 +69,20 @@ function MovieCard({ movie, index = 0 }) {
             />
           </div>
           
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-            <motion.div
-              className="absolute bottom-4 left-4 flex flex-col"
-              initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
+          {/* Overlay that's always partly visible on mobile, fully visible on hover for desktop */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent 
+                         opacity-70 sm:opacity-40 hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+            <div className="absolute bottom-4 left-4 flex flex-col">
               <h3 className="text-white font-bold text-lg line-clamp-2">{movie.Title}</h3>
               <div className="flex items-center mt-2 text-white/90">
                 <Clock className="w-4 h-4 mr-1" />
                 <span>{movie.Year}</span>
               </div>
+              
+              {/* Detail button that's always visible on mobile */}
               <motion.button
-                className="mt-3 px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium"
+                className="mt-3 px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium
+                           shadow-md"
                 whileHover={{ scale: 1.05, backgroundColor: "#4338ca" }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleDetailsClick}
@@ -90,7 +90,7 @@ function MovieCard({ movie, index = 0 }) {
                 <Info className="w-4 h-4 mr-1" />
                 Details
               </motion.button>
-            </motion.div>
+            </div>
           </div>
         </div>
         
@@ -106,6 +106,16 @@ function MovieCard({ movie, index = 0 }) {
             </div>
             <div className="text-sm text-gray-500">{movie.Year}</div>
           </div>
+          
+          {/* Mobile-only details button for extra visibility */}
+          <button
+            className="mt-3 w-full px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium
+                     shadow-sm hover:bg-indigo-700 md:hidden"
+            onClick={handleDetailsClick}
+          >
+            <Info className="w-4 h-4 mr-1" />
+            View Details
+          </button>
         </div>
       </motion.div>
 
