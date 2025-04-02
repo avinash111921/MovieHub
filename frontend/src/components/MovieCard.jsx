@@ -71,8 +71,9 @@ function MovieCard({ movie, index = 0 }) {
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
             <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              whileHover={{ y: 0, opacity: 1 }}
+              className="absolute bottom-4 left-4 flex flex-col"
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
               <h3 className="text-white font-bold text-lg line-clamp-2">{movie.Title}</h3>
