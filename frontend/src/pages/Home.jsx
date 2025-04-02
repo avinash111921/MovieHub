@@ -30,7 +30,7 @@ function Home() {
     setLoading(true);
     try {
       // Use search query if provided, otherwise use selected genre
-      const query = searchQuery || selectedGenre;
+      const query = searchQuery.trim() || selectedGenre;
       const currentPage = resetMovies ? 1 : page;
       const API_URL = `https://www.omdbapi.com/?s=${query}&type=movie&page=${currentPage}&apikey=${API_KEY}`;
       

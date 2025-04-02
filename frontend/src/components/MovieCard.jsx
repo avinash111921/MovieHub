@@ -119,7 +119,7 @@ function MovieCard({ movie, index = 0 }) {
             onClick={() => setShowDetails(false)}
           >
             <motion.div 
-              className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-xl w-full md:w-11/12 lg:max-w-4xl max-h-[90vh] overflow-y-auto"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -177,7 +177,7 @@ function MovieCard({ movie, index = 0 }) {
                             <h3 className="text-xl font-semibold mb-2">Genres</h3>
                             <div className="flex flex-wrap gap-2">
                               {detailsData.Genre.split(',').map((genre, i) => (
-                                <span key={i} className="px-3 py-1 bg-gray-100 rounded-full text-sm">
+                                <span key={i} className="px-2 py-1 bg-gray-100 rounded-full text-sm">
                                   {genre.trim()}
                                 </span>
                               ))}
