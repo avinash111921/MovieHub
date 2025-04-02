@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, Star, Info, X, Film } from 'lucide-react';
 import { axiosInstance } from '../utils/axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import MovieCard from '../components/MovieCard';
 
 const Upcoming = () => {
   const [movies, setMovies] = useState([]);
@@ -92,76 +93,18 @@ const Upcoming = () => {
       <h1 className="text-3xl font-bold mb-8">Upcoming Releases</h1>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {movies.map((movie, index) => (
-          <motion.div 
+          <MovieCard
             key={movie.id}
-            className="bg-white rounded-xl shadow-lg overflow-hidden h-full hover:shadow-xl transition-shadow"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.5, 
-              delay: index * 0.1,
-              ease: [0.43, 0.13, 0.23, 0.96] 
+            movie={{
+              Title: movie.title,
+              Year: movie.release_date.split('-')[0],
+              Poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+              imdbID: movie.id,
+              vote_average: movie.vote_average
             }}
-            whileHover={{ 
-              scale: 1.03,
-              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
-            }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <div className="block relative group">
-              <div className="aspect-[2/3] overflow-hidden">
-                <motion.img 
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  className="w-full h-full object-cover"
-                  initial={{ scale: 1.1 }}
-                  whileHover={{ scale: 1.2 }}
-                  transition={{ duration: 0.5 }}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'https://via.placeholder.com/500x750?text=No+Image+Available';
-                  }}
-                />
-              </div>
-              
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  whileHover={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h3 className="text-white font-bold text-lg line-clamp-2">{movie.title}</h3>
-                  <div className="flex items-center mt-2 text-white/90">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    <span>{movie.release_date}</span>
-                  </div>
-                  <motion.button
-                    className="mt-3 px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium"
-                    whileHover={{ scale: 1.05, backgroundColor: "#4338ca" }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => handleDetailsClick(e, movie)}
-                  >
-                    <Info className="w-4 h-4 mr-1" />
-                    Details
-                  </motion.button>
-                </motion.div>
-              </div>
-            </div>
-            
-            <div className="p-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold text-gray-800 line-clamp-1">{movie.title}</h3>
-              </div>
-              
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center text-yellow-500">
-                  <Star className="w-4 h-4 fill-current text-yellow-500" />
-                  <span className="ml-1 text-sm font-medium">{movie.vote_average.toFixed(1)}</span>
-                </div>
-                <div className="text-sm text-gray-500">{movie.release_date.split('-')[0]}</div>
-              </div>
-            </div>
-          </motion.div>
+            index={index}
+            handleDetailsClick={(e) => handleDetailsClick(e, movie)}
+          />
         ))}
       </div>
 
