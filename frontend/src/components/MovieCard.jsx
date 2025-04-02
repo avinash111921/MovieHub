@@ -70,21 +70,17 @@ function MovieCard({ movie, index = 0 }) {
           </div>
           
           {/* Overlay that's always partly visible on mobile, fully visible on hover for desktop */}
-          {/* <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent 
-                         opacity-0 sm:opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4"> */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent  hover:opacity-100
-                sm:block hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent 
+            opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4
+            sm:block">
             <div className="absolute bottom-4 left-4 flex flex-col">
               <h3 className="text-white font-bold text-lg line-clamp-2">{movie.Title}</h3>
               <div className="flex items-center mt-2 text-white/90">
                 <Clock className="w-4 h-4 mr-1" />
                 <span>{movie.Year}</span>
               </div>
-              
-              {/* Detail button that's always visible on mobile */}
               <motion.button
-                className="mt-3 px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium
-                           shadow-md"
+                className="mt-3 px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium shadow-md"
                 whileHover={{ scale: 1.05, backgroundColor: "#4338ca" }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleDetailsClick}
