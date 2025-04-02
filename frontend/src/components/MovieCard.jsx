@@ -43,7 +43,7 @@ function MovieCard({ movie, index = 0 }) {
   return (
     <>
       <motion.div 
-        className="bg-white rounded-xl shadow-lg overflow-hidden h-full hover:shadow-xl transition-shadow relative"
+        className="bg-white rounded-xl shadow-lg overflow-hidden h-[350px] sm:h-[400px] transition-all duration-300 relative"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ 
@@ -58,7 +58,7 @@ function MovieCard({ movie, index = 0 }) {
         whileTap={{ scale: 0.97 }}
       >
         <div className="block relative">
-          <div className="aspect-[2/3] overflow-hidden">
+          <div className="aspect-[2/3] sm:aspect-[3/4] overflow-hidden">
             <motion.img 
               src={posterUrl} 
               alt={movie.Title}
@@ -71,35 +71,35 @@ function MovieCard({ movie, index = 0 }) {
           
           {/* Overlay that's always partly visible on mobile, fully visible on hover for desktop */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent 
-            opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4
+            opacity-0 sm:opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 sm:p-4
             sm:block">
-            <div className="absolute bottom-4 left-4 flex flex-col">
-              <h3 className="text-white font-bold text-lg line-clamp-2">{movie.Title}</h3>
-              <div className="flex items-center mt-2 text-white/90">
-                <Clock className="w-4 h-4 mr-1" />
-                <span>{movie.Year}</span>
+            <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 flex flex-col">
+              <h3 className="text-white font-bold text-sm sm:text-lg line-clamp-2">{movie.Title}</h3>
+              <div className="flex items-center mt-1 sm:mt-2 text-white/90">
+                <Clock className="w-3 sm:w-4 h-3 sm:h-4 mr-0.5 sm:mr-1" />
+                <span className="text-xs sm:text-sm">{movie.Year}</span>
               </div>
               <motion.button
-                className="mt-3 px-4 py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-medium shadow-md"
+                className="mt-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs sm:text-sm font-medium shadow-md"
                 whileHover={{ scale: 1.05, backgroundColor: "#4338ca" }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleDetailsClick}
               >
-                <Info className="w-4 h-4 mr-1" />
+                <Info className="w-3 sm:w-4 h-3 sm:h-4 mr-0.5 sm:mr-1" />
                 Details
               </motion.button>
             </div>
           </div>
         </div>
         
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-gray-800 line-clamp-1">{movie.Title}</h3>
+            <h3 className="font-bold text-gray-800 text-sm sm:text-base line-clamp-1">{movie.Title}</h3>
           </div>
           
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between mt-2 sm:mt-3">
             <div className="flex items-center text-yellow-500">
-              <Star className="w-4 h-4 fill-current text-yellow-500" />
+              <Star className="w-4 h-4 mr-1" />
               <span className="ml-1 text-sm font-medium">IMDB</span>
             </div>
             <div className="text-sm text-gray-500">{movie.Year}</div>
