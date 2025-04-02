@@ -71,7 +71,7 @@ function MovieCard({ movie, index = 0 }) {
           
           {/* Overlay that's always partly visible on mobile, fully visible on hover for desktop */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent 
-                        hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                         opacity-0 sm:opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
             <div className="absolute bottom-4 left-4 flex flex-col">
               <h3 className="text-white font-bold text-lg line-clamp-2">{movie.Title}</h3>
               <div className="flex items-center mt-2 text-white/90">
