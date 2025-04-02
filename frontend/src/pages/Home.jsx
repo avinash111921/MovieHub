@@ -127,7 +127,7 @@ function Home() {
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section with Video Background */}
       <motion.section 
-        className="relative min-h-[50vh] md:h-[60vh] lg:h-[575px] overflow-hidden -mt-[72px]"
+        className="relative h-[575px] overflow-hidden -mt-[72px] " // Negative margin to remove gap
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
@@ -141,17 +141,18 @@ function Home() {
             className="w-full h-full object-cover"
           >
             <source src={HERO_VIDEO_URL} type="video/mp4" />
-            <img
-              src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80"
-              alt="Cinema"
+            {/* Fallback image if video fails to load */}
+          <img
+            src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80"
+            alt="Cinema"
               className="w-full h-full object-cover"
             />
           </video>
           
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-gray-900/90 flex items-center justify-center pt-[72px]">
-            <div className="container mx-auto px-4 sm:px-6 py-12 text-center">
+            <div className="container mx-auto px-6 py-12 text-center">
               <motion.h1 
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight text-center"
+                className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight text-center"
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -159,7 +160,7 @@ function Home() {
                 Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500">CineVerse</span>
               </motion.h1>
               <motion.p 
-                className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8"
+                className="text-xl text-white/90 max-w-2xl mx-auto mb-8"
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
@@ -170,7 +171,7 @@ function Home() {
               
               <motion.form 
                 onSubmit={handleSearch}
-                className="max-w-md mx-auto flex items-center bg-white/10 backdrop-blur-md rounded-full px-3 sm:px-4 py-2 border border-white/20"
+                className="max-w-lg mx-auto flex items-center bg-white/10 backdrop-blur-md rounded-full px-4 py-2 border border-white/20"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
@@ -180,15 +181,15 @@ function Home() {
                   placeholder="Search for movies..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-grow bg-transparent border-none outline-none px-3 sm:px-4 py-2 text-white placeholder-white/70 text-sm sm:text-base"
+                  className="flex-grow bg-transparent border-none outline-none px-4 py-2 text-white placeholder-white/70"
                 />
                 <motion.button 
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 md:px-6 py-2 rounded-full flex items-center text-xs sm:text-sm md:text-base"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 md:px-6 py-2 rounded-full flex items-center text-sm md:text-base"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Search className="w-4 sm:w-5 h-4 sm:h-5 mr-1.5 sm:mr-2" />
+                  <Search className="w-5 h-5 mr-2" />
                   <span>Search</span>
                 </motion.button>
               </motion.form>
@@ -198,28 +199,30 @@ function Home() {
       </motion.section>
 
       {/* Genre Selection */}
-      <div className="container mx-auto px-4 sm:px-6 py-8">
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {GENRES.map((genre) => (
-            <motion.button
-              key={genre}
-              onClick={() => handleGenreChange(genre)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                selectedGenre === genre 
-                  ? 'bg-indigo-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {genre.charAt(0).toUpperCase() + genre.slice(1)}
-            </motion.button>
-          ))}
+      <section className="py-8 bg-white shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center flex-wrap gap-2 md:gap-3 px-2">
+            {GENRES.map((genre) => (
+              <motion.button
+                key={genre}
+                onClick={() => handleGenreChange(genre)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                  selectedGenre === genre 
+                    ? 'bg-indigo-600 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {genre.charAt(0).toUpperCase() + genre.slice(1)}
+              </motion.button>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Movies Horizontal Scroll Section */}
-      <section className="container mx-auto px-4 sm:px-6 py-12">
+      <section className="container mx-auto px-4 py-12">
         <motion.div 
           className="flex items-center mb-8 space-x-2"
           initial={{ opacity: 0, x: -20 }}
