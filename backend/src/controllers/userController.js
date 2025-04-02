@@ -203,6 +203,12 @@ const refreshAcessToken = asyncHandler(async(req,res) => {
 
         const {accessToken,newRefreshToken} = await generateAccessAndRefreshToken(user._id);
 
+        await User.findByIdAndUpdate(user._id,{
+            $set : {
+                refreshToken : newRefreshToken
+            }
+        },{new : true})
+        
         const options = {
             httpOnly : true,
             secure : process.env.NODE_ENV === "production",
